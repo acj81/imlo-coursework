@@ -5,6 +5,16 @@ from torchvision import transforms
 from torchvision import models
 from torch import nn
 
+
+# options / hyperparams:
+device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+print(f"Using accelerator: {device}")
+
+loss_fn = torch.nn.CrossEntropyLoss()
+batch_size = 32
+
+
+
 # specify function to convert from integer label (0-36 inclusive) to corresponding binary array:
 to_one_hot = transforms.Compose(
         [
@@ -21,14 +31,6 @@ image_transform = transforms.Compose(
     ]
 )
 
-# specify test, train datasets:
-train_data = datasets.OxfordIIITPet(
-    root="data",
-    split="trainval",
-    download=True,
-    transform=image_transform,
-    target_transform=to_one_hot,
-)
 
 test_data = datasets.OxfordIIITPet(
     root="data",
@@ -38,11 +40,16 @@ test_data = datasets.OxfordIIITPet(
     target_transform=to_one_hot,
 )
 
-# handle accelerators i.e. GPU - if one available, should use that:
-device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
-print(f"Using accelerator: {device}")
+test_dataloader = DataLoader(
+        test_data,
+        batch_size=batch_size,
+        shuffle=True,
+)
 
-# -- MODEL --
+
+
+
+# test across test dataset:
 
 class ArchimedesNet(nn.Module):
     def __init__(self):
@@ -70,27 +77,7 @@ class ArchimedesNet(nn.Module):
         return logits
 
 model = ArchimedesNet().to(device)
-
-# -- train, test loops:
-
-def train(dataloader, model, loss_fn, optimizer, device):
-    # model into training mode - good practice
-    model.train()
-    # size of dataset, use for computing accuracy:
-    size = len(dataloader.dataset)
-    # train on each batch
-    for batch, (features, labels) in enumerate(dataloader):
-        # move both to device:
-        features = features.to(device)
-        labels = labels.to(device)
-        # prediction and loss
-        pred = model(features)
-        loss = loss_fn(pred, labels)
-        # Backpropagation
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
-
+model.load_state_dict(torch.load("model.pth", weights_only=True))
 
 def test(dataloader, model, loss_fn, device):
     # set model to evaluation mode - good practice
@@ -118,35 +105,8 @@ def test(dataloader, model, loss_fn, device):
     accuracy = correct / size
     print(f"Test Error: \n Accuracy: {(100*accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
-# hyperparameters:
+# call our test function:
 
-
-learn_rate = 0.001
-
-batch_size = 32 
-
-epochs = 5
-
-loss_fn = nn.CrossEntropyLoss()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=learn_rate, momentum=0.9)
-
-
-# actual training code here:
-
-train_dataloader = DataLoader(
-        train_data, 
-        batch_size=batch_size, 
-        shuffle=True,
-)
-
-test_dataloader = DataLoader(
-        test_data,
-        batch_size=batch_size,
-        shuffle=True,
-)
-
-# test, train then test again to show improvement:
 
 test(
     model = model,
@@ -155,21 +115,3 @@ test(
     device = device,
 )
 
-for i in range(epochs):
-    print(f"epoch: {i}")
-    train(
-        model = model,
-        loss_fn = loss_fn,
-        optimizer = optimizer,
-        dataloader = train_dataloader,
-        device = device,
-    )
-
-test(
-    model = model,
-    loss_fn = loss_fn,
-    dataloader = test_dataloader,
-    device = device,
-)
-
-torch.save(model.state_dict(), "model.pth")
