@@ -5,44 +5,8 @@ from torchvision import transforms
 from torchvision import models
 from torch import nn
 
-# specify function to convert from integer label (0-36 inclusive) to corresponding binary array:
-to_one_hot = transforms.Compose(
-        [
-            transforms.Lambda(lambda x : torch.zeros(37, dtype=torch.float).scatter_(dim=0, index=torch.tensor(x).long(), value=1)),
-            #transforms.ToTensor(),
-        ]
-)
 
-# function to resize images, convert to tensor:
-image_transform = transforms.Compose(
-    [
-        transforms.Resize([227, 227]),
-        transforms.ToTensor(),
-    ]
-)
-
-# specify test, train datasets:
-train_data = datasets.OxfordIIITPet(
-    root="data",
-    split="trainval",
-    download=True,
-    transform=image_transform,
-    target_transform=to_one_hot,
-)
-
-test_data = datasets.OxfordIIITPet(
-    root="data",
-    split="test",
-    download=True,
-    transform=image_transform,
-    target_transform=to_one_hot,
-)
-
-# handle accelerators i.e. GPU - if one available, should use that:
-device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
-print(f"Using accelerator: {device}")
-
-# -- MODEL --
+# --- DEFINE MODEL ---
 
 class ArchimedesNet(nn.Module):
     def __init__(self):
@@ -69,7 +33,32 @@ class ArchimedesNet(nn.Module):
         logits = self.layers(x)
         return logits
 
+# handle accelerators i.e. GPU - if one available, should use that:
+device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+print(f"Using accelerator: {device}")
+
 model = ArchimedesNet().to(device)
+
+
+
+# --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
+
+# specify function to convert from integer label (0-36 inclusive) to corresponding binary array:
+to_one_hot = transforms.Compose(
+        [
+            transforms.Lambda(lambda x : torch.zeros(37, dtype=torch.float).scatter_(dim=0, index=torch.tensor(x).long(), value=1)),
+            #transforms.ToTensor(),
+        ]
+)
+
+# function to resize images, convert to tensor:
+image_transform = transforms.Compose(
+    [
+        transforms.Resize([227, 227]),
+        transforms.ToTensor(),
+    ]
+)
+
 
 # -- train, test loops:
 
@@ -118,8 +107,12 @@ def test(dataloader, model, loss_fn, device):
     accuracy = correct / size
     print(f"Test Error: \n Accuracy: {(100*accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
-# hyperparameters:
 
+
+
+# --- HYPERPARAM EXPERIMENTATION HERE ---
+
+# hyperparameters:
 
 learn_rate = 0.001
 
@@ -132,7 +125,24 @@ loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learn_rate, momentum=0.9)
 
 
-# actual training code here:
+# specify test, train datasets:
+train_data = datasets.OxfordIIITPet(
+    root="data",
+    split="trainval",
+    download=True,
+    transform=image_transform,
+    target_transform=to_one_hot,
+)
+
+test_data = datasets.OxfordIIITPet(
+    root="data",
+    split="test",
+    download=True,
+    transform=image_transform,
+    target_transform=to_one_hot,
+)
+
+# dataloaders for those datasets:
 
 train_dataloader = DataLoader(
         train_data, 

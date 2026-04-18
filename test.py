@@ -6,50 +6,7 @@ from torchvision import models
 from torch import nn
 
 
-# options / hyperparams:
-device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
-print(f"Using accelerator: {device}")
-
-loss_fn = torch.nn.CrossEntropyLoss()
-batch_size = 32
-
-
-
-# specify function to convert from integer label (0-36 inclusive) to corresponding binary array:
-to_one_hot = transforms.Compose(
-        [
-            transforms.Lambda(lambda x : torch.zeros(37, dtype=torch.float).scatter_(dim=0, index=torch.tensor(x).long(), value=1)),
-            #transforms.ToTensor(),
-        ]
-)
-
-# function to resize images, convert to tensor:
-image_transform = transforms.Compose(
-    [
-        transforms.Resize([227, 227]),
-        transforms.ToTensor(),
-    ]
-)
-
-
-test_data = datasets.OxfordIIITPet(
-    root="data",
-    split="test",
-    download=True,
-    transform=image_transform,
-    target_transform=to_one_hot,
-)
-
-test_dataloader = DataLoader(
-        test_data,
-        batch_size=batch_size,
-        shuffle=True,
-)
-
-
-
-
-# test across test dataset:
+# --- DEFINE MODEL AND LOAD WEIGHTS ---
 
 class ArchimedesNet(nn.Module):
     def __init__(self):
@@ -76,8 +33,30 @@ class ArchimedesNet(nn.Module):
         logits = self.layers(x)
         return logits
 
+device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+print(f"Using accelerator: {device}")
+
 model = ArchimedesNet().to(device)
 model.load_state_dict(torch.load("model.pth", weights_only=True))
+
+
+# --- TEST THE MODEL ---
+
+# specify function to convert from integer label (0-36 inclusive) to corresponding binary array:
+to_one_hot = transforms.Compose(
+        [
+            transforms.Lambda(lambda x : torch.zeros(37, dtype=torch.float).scatter_(dim=0, index=torch.tensor(x).long(), value=1)),
+            #transforms.ToTensor(),
+        ]
+)
+
+# function to resize images, convert to tensor:
+image_transform = transforms.Compose(
+    [
+        transforms.Resize([227, 227]),
+        transforms.ToTensor(),
+    ]
+)
 
 def test(dataloader, model, loss_fn, device):
     # set model to evaluation mode - good practice
@@ -107,6 +86,22 @@ def test(dataloader, model, loss_fn, device):
 
 # call our test function:
 
+loss_fn = torch.nn.CrossEntropyLoss()
+batch_size = 32
+
+test_data = datasets.OxfordIIITPet(
+    root="data",
+    split="test",
+    download=True,
+    transform=image_transform,
+    target_transform=to_one_hot,
+)
+
+test_dataloader = DataLoader(
+        test_data,
+        batch_size=batch_size,
+        shuffle=True,
+)
 
 test(
     model = model,
