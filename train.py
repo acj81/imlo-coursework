@@ -8,22 +8,6 @@ from torch import nn
 
 # --- DEFINE MODEL ---
 
-class ResNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        # convolutional layers for feature extraction here:
-        self.conv_layers = nn.Sequential(
-            nn.Conv2d(3, 96, 11, stride = 4),
-            
-        )
-        # fully-connected layers for class prediction here:
-        self.fc_layers = nn.Sequential(
-            
-        )
-
-    def forward(inp):
-        pass
-
 class AlexNet(nn.Module):
     def __init__(self):
         super().__init__()
@@ -48,6 +32,32 @@ class AlexNet(nn.Module):
     def forward(self, x):
         logits = self.layers(x)
         return logits
+
+class ResidualAlexNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layers = nn.Sequential(
+            # convolution and pooling layers - these recognise features within our images:
+            nn.Conv2d(3, 96, 11, stride = 4),
+            nn.MaxPool2d(3),
+            nn.Conv2d(96, 256, 5, padding = 2),
+            nn.MaxPool2d(3),
+            nn.Conv2d(256, 384, 3, padding = 1),
+            nn.Conv2d(384, 384, 3, padding = 1),
+            nn.Conv2d(384, 256, 3, padding = 1),
+            nn.MaxPool2d(3),
+            # fully connected layers - these combine those features to categorise the image:
+            nn.Flatten(),
+            nn.Linear(1024, 4096),
+            nn.ReLU(),
+            nn.Linear(4096, 37),
+            nn.Softmax(dim=1),
+        )
+
+    def forward(self, x):
+        logits = self.layers(x)
+        return logits
+
 
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
