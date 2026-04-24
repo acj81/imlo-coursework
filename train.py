@@ -76,10 +76,10 @@ class ResidualAlexNet(nn.Module):
         )
 
     def forward(self, x):
-        res_1 = x
+        res_1 = self.shortcut_1(x)
         x = self.stage_1(x)
         x += res_1
-        res_2 = x
+        res_2 = self.shortcut_2(x)
         x = self.stage_2(x)
         x += res_2
         x = self.fc_layers(x)
