@@ -33,6 +33,7 @@ class AlexNet(nn.Module):
         logits = self.layers(x)
         return logits
 
+
 class ResidualAlexNet(nn.Module):
     def __init__(self):
         super().__init__()
@@ -47,8 +48,8 @@ class ResidualAlexNet(nn.Module):
         )
 
         self.shortcut_1 = nn.Sequential(
-            nn.Conv2d(3, 57, 1, stride=4, bias=False),
-            nn.BatchNorm2d(57),
+            nn.Conv2d(3, 6, 1, stride=4, bias=False),
+            nn.BatchNorm2d(6),
         )
 
         self.stage_2 = nn.Sequential(
@@ -86,11 +87,25 @@ class ResidualAlexNet(nn.Module):
         return x
 
 
+class Resnet18(nn.Module):
+    def __init__(self):
+        super().__init__()
+        
+        # initial convolution and pooling
+        self.conv_1 = nn.Conv2d(3, 64, 7, stride=2)
+        self.pool_1 = nn.MaxPool2d(3, stride=2)
+
+        # final avg pooling and fc layers - combines features to classify:
+        self.pool_2 = nn.AvgPool2d()
+
+    def forward(self, x):
+        pass 
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ResidualAlexNet().to(device)
+model = AlexNet().to(device)
 
 
 
@@ -107,7 +122,7 @@ to_one_hot = transforms.Compose(
 # function to resize images, convert to tensor:
 image_transform = transforms.Compose(
     [
-        transforms.Resize([227, 227]),
+        transforms.Resize([500, 500]),
         transforms.ToTensor(),
     ]
 )
