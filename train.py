@@ -25,8 +25,6 @@ class AlexNet(nn.Module):
             nn.Flatten(),
             nn.Linear(1024, 4096),
             nn.ReLU(),
-            nn.Linear(4096, 4096),
-            nn.ReLU(),
             nn.Linear(4096, 37),
             nn.Softmax(dim=0),
         )
