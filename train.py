@@ -46,6 +46,11 @@ class ResidualAlexNet(nn.Module):
             nn.MaxPool2d(3),
         )
 
+        self.shortcut_1 = nn.Sequential(
+            nn.Conv2d(3, 256, 1, stride=4, bias=False),
+            nn.BatchNorm2d(256),
+        )
+
         self.stage_2 = nn.Sequential(
             nn.Conv2d(256, 384, 3, padding = 1),
             nn.ReLU(),
@@ -54,6 +59,11 @@ class ResidualAlexNet(nn.Module):
             nn.Conv2d(384, 256, 3, padding = 1),
             nn.ReLU(),
             nn.MaxPool2d(3),
+        )
+
+        self.shortcut_2 = nn.Sequential(
+            nn.Conv2d(384, 256, 1, stride=1, bias=False),
+            nn.BatchNorm2d(256),
         )
 
         self.fc_layers = nn.Sequential(
