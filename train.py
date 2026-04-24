@@ -8,14 +8,23 @@ from torch import nn
 
 # --- DEFINE MODEL ---
 
-class AlexNet(nn.Module):
+class ResNet(nn.Module):
     def __init__(self):
         super().__init__()
+        # convolutional layers for feature extraction here:
+        self.conv_layers = nn.Sequential(
+            nn.Conv2d(3, 96, 11, stride = 4),
+            
+        )
+        # fully-connected layers for class prediction here:
+        self.fc_layers = nn.Sequential(
+            
+        )
 
     def forward(inp):
         pass
 
-class ArchimedesNet(nn.Module):
+class AlexNet(nn.Module):
     def __init__(self):
         super().__init__()
         self.layers = nn.Sequential(
@@ -33,7 +42,7 @@ class ArchimedesNet(nn.Module):
             nn.Linear(1024, 4096),
             nn.ReLU(),
             nn.Linear(4096, 37),
-            nn.ReLU(),
+            nn.Softmax(),
         )
 
     def forward(self, x):
@@ -44,7 +53,7 @@ class ArchimedesNet(nn.Module):
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNet().to(device)
+model = AlexNet().to(device)
 
 
 
@@ -123,7 +132,7 @@ def test(dataloader, model, loss_fn, device):
 
 learn_rate = 0.005
 
-batch_size = 16
+batch_size = 32
 
 epochs = 30
 
