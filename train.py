@@ -8,6 +8,13 @@ from torch import nn
 
 # --- DEFINE MODEL ---
 
+class AlexNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(inp):
+        pass
+
 class ArchimedesNet(nn.Module):
     def __init__(self):
         super().__init__()
@@ -114,11 +121,11 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 0.001
+learn_rate = 0.005
 
-batch_size = 32 
+batch_size = 16
 
-epochs = 5
+epochs = 30
 
 loss_fn = nn.CrossEntropyLoss()
 
