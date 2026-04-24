@@ -47,7 +47,7 @@ class ResidualAlexNet(nn.Module):
         )
 
         self.shortcut_1 = nn.Sequential(
-            nn.Conv2d(3, 256, 1, stride=4, bias=False),
+            nn.Conv2d(3, 6, 1, stride=4, bias=False),
             nn.BatchNorm2d(6),
         )
 
