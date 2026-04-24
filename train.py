@@ -26,7 +26,7 @@ class AlexNet(nn.Module):
             nn.Linear(1024, 4096),
             nn.ReLU(),
             nn.Linear(4096, 37),
-            nn.Softmax(),
+            nn.Softmax(dim=0),
         )
 
     def forward(self, x):
