@@ -80,7 +80,7 @@ class ResidualAlexNet(nn.Module):
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = AlexNet().to(device)
+model = ResidualAlexNet().to(device)
 
 
 
