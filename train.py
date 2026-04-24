@@ -14,17 +14,12 @@ class AlexNet(nn.Module):
         self.layers = nn.Sequential(
             # convolution and pooling layers - these recognise features within our images:
             nn.Conv2d(3, 96, 11, stride = 4),
-            nn.ReLU(),
             nn.MaxPool2d(3),
             nn.Conv2d(96, 256, 5, padding = 2),
-            nn.ReLU(),
             nn.MaxPool2d(3),
             nn.Conv2d(256, 384, 3, padding = 1),
-            nn.ReLU(),
             nn.Conv2d(384, 384, 3, padding = 1),
-            nn.ReLU(),
             nn.Conv2d(384, 256, 3, padding = 1),
-            nn.ReLU(),
             nn.MaxPool2d(3),
             # fully connected layers - these combine those features to categorise the image:
             nn.Flatten(),
