@@ -23,7 +23,7 @@ class AlexNet(nn.Module):
             nn.MaxPool2d(3),
             # fully connected layers - these combine those features to categorise the image:
             nn.Flatten(),
-            nn.Linear(1024, 4096),
+            nn.Linear(4096, 4096),
             nn.ReLU(),
             nn.Linear(4096, 37),
             nn.Softmax(dim=1),
