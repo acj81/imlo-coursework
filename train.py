@@ -14,19 +14,24 @@ class AlexNet(nn.Module):
         self.layers = nn.Sequential(
             # convolution and pooling layers - these recognise features within our images:
             nn.Conv2d(3, 96, 11, stride = 4),
+            nn.ReLU(),
             nn.MaxPool2d(3),
             nn.Conv2d(96, 256, 5, padding = 2),
+            nn.ReLU(),
             nn.MaxPool2d(3),
             nn.Conv2d(256, 384, 3, padding = 1),
+            nn.ReLU(),
             nn.Conv2d(384, 384, 3, padding = 1),
+            nn.ReLU(),
             nn.Conv2d(384, 256, 3, padding = 1),
+            nn.ReLU(),
             nn.MaxPool2d(3),
             # fully connected layers - these combine those features to categorise the image:
             nn.Flatten(),
             nn.Linear(1024, 4096),
             nn.ReLU(),
             nn.Linear(4096, 37),
-            nn.Softmax(dim=0),
+            nn.Softmax(dim=1),
         )
 
     def forward(self, x):
@@ -36,16 +41,27 @@ class AlexNet(nn.Module):
 class ResidualAlexNet(nn.Module):
     def __init__(self):
         super().__init__()
-        self.layers = nn.Sequential(
+        self.stage_1 = nn.Sequential(
             # convolution and pooling layers - these recognise features within our images:
             nn.Conv2d(3, 96, 11, stride = 4),
+            nn.ReLU(),
             nn.MaxPool2d(3),
             nn.Conv2d(96, 256, 5, padding = 2),
+            nn.ReLU(),
             nn.MaxPool2d(3),
+        )
+
+        self.stage_2 = nn.Sequential(
             nn.Conv2d(256, 384, 3, padding = 1),
+            nn.ReLU(),
             nn.Conv2d(384, 384, 3, padding = 1),
+            nn.ReLU(),
             nn.Conv2d(384, 256, 3, padding = 1),
+            nn.ReLU(),
             nn.MaxPool2d(3),
+        )
+
+        self.fc_layers = nn.SequentiaL(
             # fully connected layers - these combine those features to categorise the image:
             nn.Flatten(),
             nn.Linear(1024, 4096),
