@@ -122,7 +122,7 @@ to_one_hot = transforms.Compose(
 # function to resize images, convert to tensor:
 image_transform = transforms.Compose(
     [
-        transforms.Resize([500, 500]),
+        transforms.Resize([256, 256]),
         transforms.ToTensor(),
     ]
 )
