@@ -56,7 +56,7 @@ class ResidualAlexNet(nn.Module):
             nn.MaxPool2d(3),
         )
 
-        self.fc_layers = nn.SequentiaL(
+        self.fc_layers = nn.Sequential(
             # fully connected layers - these combine those features to categorise the image:
             nn.Flatten(),
             nn.Linear(1024, 4096),
