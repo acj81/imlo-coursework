@@ -71,8 +71,14 @@ class ResidualAlexNet(nn.Module):
         )
 
     def forward(self, x):
-        logits = self.layers(x)
-        return logits
+        res_1 = x
+        x = self.stage_1(x)
+        x += res_1
+        res_2 = x
+        x = self.stage_2(x)
+        x += res_2
+        x = self.fc_layers(x)
+        return x
 
 
 # handle accelerators i.e. GPU - if one available, should use that:
