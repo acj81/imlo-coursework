@@ -110,7 +110,8 @@ class ANBlock(nn.Module):
         # add 1st residual back in for smoother gradient
         x += res
         # get 2nd residual so we can add later:
-        res = self.reduce_channels(x)
+        res = x
+        #res = self.reduce_channels(x)
         x = self.activ(x)
         x = self.conv3(x)
         x = self.activ(x)
