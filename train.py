@@ -109,8 +109,8 @@ class ArchimedesNet(nn.Module):
         self.layers = nn.Sequential(
             # feature detection using CNNs:
             ANBlock(3, 32, 5, 2),
-            ANBlock(32, 32, 5, 2),
-            ANBlock(32, 64, 4, 2),
+            ANBlock(32, 32, 4, 2),
+            ANBlock(32, 64, 3, 2),
             nn.BatchNorm2d(64),
             ANBlock(64, 64, 3, 2),
             ANBlock(64, 128, 3, 2),
