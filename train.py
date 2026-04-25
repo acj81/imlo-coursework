@@ -93,7 +93,7 @@ class ANBlock(nn.Module):
         self.layers = nn.Sequential(
             nn.Conv2d(in_channels, out_channels, filter_size, padding="same"),
             nn.Conv2d(out_channels, out_channels, filter_size, padding="same"),
-            nn.ReLU(),
+            nn.LeakyReLU(),
             nn.MaxPool2d(pool_size),
         )
 
@@ -116,16 +116,16 @@ class ArchimedesNet(nn.Module):
             ANBlock(64, 128, 3, 2),
             ANBlock(128, 128, 2, 2),
             ANBlock(128, 256, 2, 2),
+            ANBlock(256, 256, 1, 2),
             # image classification using features we detected:
             nn.Flatten(),
             nn.BatchNorm1d(1024),
-            nn.Dropout(),
+            nn.Dropout(0.2),
             nn.Linear(1024, 512),
-            nn.Dropout(),
+            nn.Dropout(0.2),
             nn.Linear(512, 216),
-            nn.Dropout(),
+            nn.Dropout(0.1),
             nn.Linear(216, 37),
-            nn.Softmax(dim=1),
         )       
 
     def forward(self, x):
@@ -221,7 +221,7 @@ epochs = 30
 
 loss_fn = nn.CrossEntropyLoss()
 
-optimizer = torch.optim.SGD(model.parameters(), lr=learn_rate, momentum=0.9)
+optimizer = torch.optim.Adam(model.parameters())
 
 
 # specify test, train datasets:
