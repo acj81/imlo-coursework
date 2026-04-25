@@ -92,7 +92,7 @@ class ANBlock(nn.Module):
         # building blocks for larger network defined here for reusability:
         self.layers = nn.Sequential(
             nn.Conv2d(in_channels, out_channels, filter_size),
-            nn.Conv2d(in_channels, out_channels, filter_size),
+            nn.Conv2d(out_channels, out_channels, filter_size),
             nn.ReLU(),
             nn.MaxPool2d(pool_size),
         )
