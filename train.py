@@ -86,7 +86,7 @@ class ResidualAlexNet(nn.Module):
         x = self.fc_layers(x)
         return x
 
-class ANBlock(nn.Module):
+class ANV1Block(nn.Module):
     def __init__(self, in_channels, out_channels, filter_size, pool_size):
         super().__init__()
         # building blocks for larger network defined here for reusability:
@@ -111,30 +111,30 @@ class ANBlock(nn.Module):
         x = self.pool(x)
         return x
 
-class ArchimedesNet(nn.Module):
+class ArchimedesNetV1(nn.Module):
     def __init__(self):
         super().__init__()
  
         # define our actual architecture:
         self.layers = nn.Sequential(
             # feature detection using CNNs:
-            ANBlock(3, 32, 5, 2),
-            ANBlock(32, 32, 4, 2),
-            ANBlock(32, 64, 3, 2),
+            ANV1Block(3, 32, 5, 2),
+            ANV1Block(32, 32, 4, 2),
+            ANV1Block(32, 64, 3, 2),
             nn.BatchNorm2d(64),
-            ANBlock(64, 64, 3, 2),
-            ANBlock(64, 128, 3, 2),
-            ANBlock(128, 128, 2, 2),
-            ANBlock(128, 256, 2, 2),
-            ANBlock(256, 256, 1, 2),
+            ANV1Block(64, 64, 3, 2),
+            ANV1Block(64, 128, 3, 2),
+            ANV1Block(128, 128, 2, 2),
+            ANV1Block(128, 256, 2, 2),
+            ANV1Block(256, 256, 1, 2),
             # image classification using features we detected:
             nn.Flatten(),
             nn.BatchNorm1d(256),
-            nn.Dropout(0.2),
+            nn.Dropout(0.5),
             nn.Linear(256, 512),
-            nn.Dropout(0.2),
+            nn.Dropout(0.3),
             nn.Linear(512, 216),
-            nn.Dropout(0.1),
+            nn.Dropout(0.2),
             nn.Linear(216, 37),
         )       
 
@@ -142,11 +142,26 @@ class ArchimedesNet(nn.Module):
         x = self.layers(x)
         return x
 
+
+class ArchimedesNetV2(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = (
+            #
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNet().to(device)
+model = ArchimedesNetV1().to(device)
 
 
 
