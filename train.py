@@ -94,15 +94,21 @@ class ANBlock(nn.Module):
         
         self.conv1 = nn.Conv2d(in_channels, out_channels, filter_size, padding="same")
         self.conv2 = nn.Conv2d(out_channels, out_channels, filter_size, padding="same")
-        self.pool = nn.MaxPool2d(pool_size),
+        self.pool = nn.MaxPool2d(pool_size)
+
+        self.reduce_channels = nn.Conv2d(in_channels, out_channels, 1)
 
     def forward(self, x):
-        res = x
+        # reduce channels on input so we can add later:
+        res = self.reduce_channels(x)
+        # convolutions
         x = self.conv1(x)
         x = self.activ(x)
         x = self.conv2(x)
+        # add residual back in for smoother gradient
         x += res
         x = self.activ(x)
+        # pool to reduce img size
         x = self.pool(x)
         return x
 
