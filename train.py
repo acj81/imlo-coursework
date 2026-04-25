@@ -93,7 +93,7 @@ class ANBlock(nn.Module):
         self.activ = nn.ELU()
         
         self.conv1 = nn.Conv2d(in_channels, in_channels, filter_size, padding="same")
-        self.conv1 = nn.Conv2d(in_channels, out_channels, filter_size, padding="same")
+        self.conv2 = nn.Conv2d(in_channels, out_channels, filter_size, padding="same")
         self.conv3 = nn.Conv2d(out_channels, out_channels, filter_size, padding="same")
         self.pool = nn.MaxPool2d(pool_size)
 
