@@ -223,7 +223,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 3e-3
+learn_rate = 0.0005
 
 batch_size = 32
 
