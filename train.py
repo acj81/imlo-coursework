@@ -111,7 +111,7 @@ class ArchimedesNet(nn.Module):
             ANBlock(3, 32, 5, 2),
             ANBlock(32, 32, 4, 2),
             ANBlock(32, 64, 4, 2),
-            nn.BatchNorm2d(32),
+            nn.BatchNorm2d(64),
             ANBlock(32, 64, 3, 2),
             ANBlock(64, 128, 3, 2),
             ANBlock(128, 128, 2, 2),
