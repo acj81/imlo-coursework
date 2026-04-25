@@ -90,12 +90,10 @@ class ANBlock(nn.Module):
     def __init__(self, in_channels, out_channels, filter_size, pool_size):
         super().__init__()
         # building blocks for larger network defined here for reusability:
-        self.activ = nn.ELU()
+        self.activ = nn.LeakyRELU()
         
         self.conv1 = nn.Conv2d(in_channels, in_channels, filter_size, padding="same")
         self.conv2 = nn.Conv2d(in_channels, out_channels, filter_size, padding="same")
-        self.conv3 = nn.Conv2d(out_channels, out_channels, filter_size, padding="same")
-        self.conv4 = nn.Conv2d(out_channels, out_channels, filter_size, padding="same")
         self.pool = nn.MaxPool2d(pool_size)
 
         self.reduce_channels = nn.Conv2d(in_channels, out_channels, 1)
@@ -108,15 +106,6 @@ class ANBlock(nn.Module):
         x = self.activ(x)
         x = self.conv2(x)
         # add 1st residual back in for smoother gradient
-        x += res
-        # get 2nd residual so we can add later:
-        res = x
-        #res = self.reduce_channels(x)
-        x = self.activ(x)
-        x = self.conv3(x)
-        x = self.activ(x)
-        x = self.conv4(x)
-        # add 2nd residual back in for smoother gradient
         x += res
         x = self.activ(x)
         x = self.pool(x)
