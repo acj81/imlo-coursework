@@ -108,7 +108,6 @@ class ANBlock(nn.Module):
         # add residual back in for smoother gradient
         x += res
         x = self.activ(x)
-        # pool to reduce img size
         x = self.pool(x)
         return x
 
@@ -119,20 +118,20 @@ class ArchimedesNet(nn.Module):
         # define our actual architecture:
         self.layers = nn.Sequential(
             # feature detection using CNNs:
-            ANBlock(3, 32, 7, 2),
-            ANBlock(32, 32, 6, 2),
-            ANBlock(32, 64, 5, 2),
+            ANBlock(3, 32, 5, 2),
+            ANBlock(32, 32, 4, 2),
+            ANBlock(32, 64, 3, 2),
             nn.BatchNorm2d(64),
-            ANBlock(64, 64, 4, 2),
+            ANBlock(64, 64, 3, 2),
             ANBlock(64, 128, 3, 2),
             ANBlock(128, 128, 2, 2),
             ANBlock(128, 256, 2, 2),
-            #ANBlock(256, 256, 1, 2),
+            ANBlock(256, 256, 1, 2),
             # image classification using features we detected:
             nn.Flatten(),
-            nn.BatchNorm1d(1024),
+            nn.BatchNorm1d(256),
             nn.Dropout(0.2),
-            nn.Linear(1024, 512),
+            nn.Linear(256, 512),
             nn.Dropout(0.2),
             nn.Linear(512, 216),
             nn.Dropout(0.1),
