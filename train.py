@@ -90,7 +90,7 @@ class ANBlock(nn.Module):
     def __init__(self, in_channels, out_channels, filter_size, pool_size):
         super().__init__()
         # building blocks for larger network defined here for reusability:
-        self.activ = nn.LeakyReLU()
+        self.activ = nn.GLU()
         
         self.conv1 = nn.Conv2d(in_channels, out_channels, filter_size, padding="same")
         self.conv2 = nn.Conv2d(out_channels, out_channels, filter_size, padding="same")
