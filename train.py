@@ -86,20 +86,35 @@ class ResidualAlexNet(nn.Module):
         x = self.fc_layers(x)
         return x
 
-
-class Resnet18(nn.Module):
-    def __init__(self):
+class ANBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, filter_size, pool_size):
         super().__init__()
-        
-        # initial convolution and pooling
-        self.conv_1 = nn.Conv2d(3, 64, 7, stride=2)
-        self.pool_1 = nn.MaxPool2d(3, stride=2)
-
-        # final avg pooling and fc layers - combines features to classify:
-        self.pool_2 = nn.AvgPool2d()
+        # building blocks for larger network defined here for reusability:
+        self.layers = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, filter_size),
+            nn.Conv2d(in_channels, out_channels, filter_size),
+            nn.ReLU(),
+            nn.MaxPool2d(pool_size),
+        )
 
     def forward(self, x):
-        pass 
+        x = self.layers(x)
+        return x
+
+class ArchimedesNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            ANBlock(3, 32, 5, 2),
+            ANBlock(32, 32, 4, 2),
+            ANBlock(32, 32, 4, 2),
+        )       
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
 
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
