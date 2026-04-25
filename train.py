@@ -90,15 +90,20 @@ class ANBlock(nn.Module):
     def __init__(self, in_channels, out_channels, filter_size, pool_size):
         super().__init__()
         # building blocks for larger network defined here for reusability:
-        self.layers = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, filter_size, padding="same"),
-            nn.Conv2d(out_channels, out_channels, filter_size, padding="same"),
-            nn.LeakyReLU(),
-            nn.MaxPool2d(pool_size),
-        )
+        self.activ = nn.LeakyReLU()
+        
+        self.conv1 = nn.Conv2d(in_channels, out_channels, filter_size, padding="same")
+        self.conv2 = nn.Conv2d(out_channels, out_channels, filter_size, padding="same")
+        self.pool = nn.MaxPool2d(pool_size),
 
     def forward(self, x):
-        x = self.layers(x)
+        res = x
+        x = self.conv1(x)
+        x = self.activ(x)
+        x = self.conv2(x)
+        x += res
+        x = self.activ(x)
+        x = self.pool(x)
         return x
 
 class ArchimedesNet(nn.Module):
