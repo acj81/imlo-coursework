@@ -119,9 +119,9 @@ class ArchimedesNet(nn.Module):
             ANBlock(256, 256, 1, 2),
             # image classification using features we detected:
             nn.Flatten(),
-            nn.BatchNorm1d(1024),
+            nn.BatchNorm1d(256),
             nn.Dropout(0.2),
-            nn.Linear(1024, 512),
+            nn.Linear(256, 512),
             nn.Dropout(0.2),
             nn.Linear(512, 216),
             nn.Dropout(0.1),
