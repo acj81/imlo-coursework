@@ -153,7 +153,7 @@ class ANDenseBlock(nn.Module):
         # calculate input channels for each layer:
         self.in_channels = [in_channels]
 
-        for _ in range(1, self.num_layers):
+        for _ in range(self.num_layers):
             new_in_channels = sum(self.in_channels)
             self.in_channels.append(new_in_channels)
 
