@@ -150,17 +150,21 @@ class ANDenseBlock(nn.Module):
         layers = []
 
         for i in range(conv_layers):
-            layers += [
-                nn.BatchNorm2d(in_channels + growth_rate * i),
+            layers += nn.Sequential([
+                nn.BatchNorm2d(in_channels + (growth_rate * i)),
                 nn.ReLU(),
                 nn.Conv2d(in_channels + growth_rate * i, growth_rate, filter_size),
-            ]
+            ])
 
         # convert an array of modules into sequence, so we can call forward on it
         self.layers = nn.Sequential(*layers)
 
     def forward(self, x):
-        x = self.layers(x)
+        # iterate for each submodule:
+        for layer in self.layers:
+            y = layer(x)
+            x = torch.cat((x, y), dim=1)
+        # return final input - input across all the features 
         return x
 
 
@@ -168,8 +172,8 @@ class ANTransBlock(nn.Module):
     def __init__(self, in_channels, out_channels, pool_size):
         super().__init__()
         self.layers = nn.Sequential(
-            nn.BatchNorm2d(in_channels),
             nn.Conv2d(in_channels, out_channels, 1),
+            nn.BatchNorm2d(out_channels),
             nn.MaxPool2d(pool_size)
         )
 
@@ -193,7 +197,7 @@ class ArchimedesNetV2(nn.Module):
             ANTransBlock(20, 4, 2),
             # final pooling layer to reduce down, batch norm:
             nn.AvgPool2d(2),
-            #nn.BatchNorm2d(4),
+            nn.BatchNorm2d(4),
             # finally, linear classification:
             nn.Linear(256, 37)
         )
