@@ -144,32 +144,35 @@ class ArchimedesNetV1(nn.Module):
 
 
 class ANDenseBlock(nn.Module):
-    def __init__(self, in_channels, out_a):
+    def __init__(self, in_channels, out_channels, filter_sizes):
         super().__init__()
- 
-        out_b = in_channels + out_a
-        out_c = out_a + out_b
-        out_d = out_b + out_c
-        out_e = out_c + out_d
 
-        # define our actual architecture:
+        # get num layers from number of filter sizes given:
+        self.num_layers = len(filter_sizes)
+ 
+        # calculate input channels for each layer:
+        self.in_channels = [in_channels, in_channels + out_channels]
+
+        for _ in range(self.num_layers):
+            new_in_channels = sum(self.in_channels)
+            self.in_channels.append(new_in_channels)
+
+        # declare our layers, including our array of convolutional layers:
         self.activ = nn.ReLU()
-        
-        self.conv1 = nn.Conv2d(in_channels, out_a, 7, padding="same")
-        self.conv2 = nn.Conv2d(out_b, out_c, 5, padding="same")
-        self.conv3 = nn.Conv2d(out_c, out_d, 3, padding="same")
-        self.conv4 = nn.Conv2d(out_d, out_e, 1, padding="same")
+
+        self.conv_layers = [nn.Conv2d(self.in_channels[i], out_channels, self.filter_sizes[i]) for i in range(self.num_layers)]
+
 
     def forward(self, x):
-        # convolve, activate, concatenate for each layer:
-        x = self.activ(self.conv1(x))
-        y = torch.cat((x, y), 1)
-        x = self.activ(self.conv2(y))
-        y = torch.cat((x, y), 1)
-        x = self.activ(self.conv3(y))
-        y = torch.cat((x, y), 1)
-        x = self.activ(self.conv4(y))
-        return x
+        # y is running output, x is running input:
+        y = x
+        for i in range(self.num_layers):
+            # convolve, activate using current layer
+            y = self.conv_layers[i](x) 
+            y = self.activ(y)
+            # concatenate into running input
+            x = torch.cat((x, y), 1)
+        return y
 
 
 class ANTransBlock(nn.Module):
@@ -193,14 +196,14 @@ class ArchimedesNetV2(nn.Module):
  
         # define our actual architecture:
         self.layers = nn.Sequential(
-            ANDenseBlock(3, 32),
-            ANTransBlock(102, 64, 2),
-            ANDenseBlock(64, 64),
-            ANTransBlock(320, 64, 2),
-            ANDenseBlock(64, 32),
-            ANTransBlock(224, 32, 2),
-            ANDenseBlock(32, 16),
-            ANTransBlock(112, 8, 2),
+            ANDenseBlock(3, 32, [5, 3, 3, 1]),
+            ANTransBlock(32, 32, 2),
+            ANDenseBlock(32, 64, [5, 3, 3, 1]),
+            ANTransBlock(64, 32, 2),
+            ANDenseBlock(32, 64, [5, 3, 3, 1]),
+            ANTransBlock(64, 32, 2),
+            ANDenseBlock(32, 128),
+            ANTransBlock(128, 16, 2),
             nn.Flatten(),
             nn.Linear(2048, 512),
             nn.Dropout(0.2),
