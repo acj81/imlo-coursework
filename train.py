@@ -151,10 +151,10 @@ class ANDenseBlock(nn.Module):
         self.activ = nn.ReLU()
 
         # declare conv layers here:
-        self.conv1 = nn.Conv2d(in_channels, in_channels, 5)
-        self.conv2 = nn.Conv2d(in_channels * 2, in_channels, 1)
-        self.conv3 = nn.Conv2d(in_channels * 3, in_channels, 5)
-        self.conv4 = nn.Conv2d(in_channels * 4, in_channels, 1)
+        self.conv1 = nn.Conv2d(in_channels, in_channels, 5, padding="same")
+        self.conv2 = nn.Conv2d(in_channels * 2, in_channels, 1, padding="same")
+        self.conv3 = nn.Conv2d(in_channels * 3, in_channels, 5, padding="same")
+        self.conv4 = nn.Conv2d(in_channels * 4, in_channels, 1, padding="same")
 
     def forward(self, x):
         # y is running output, x is running input:
