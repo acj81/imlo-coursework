@@ -242,7 +242,8 @@ epochs = 30
 
 loss_fn = nn.CrossEntropyLoss()
 
-iterations = 5 # get average of 5 test and train loops to get better picture that accounts for randomness
+optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
+
 
 # specify test, train datasets:
 train_data = datasets.OxfordIIITPet(
@@ -278,20 +279,15 @@ test_dataloader = DataLoader(
 
 # --- TRAIN AND TEST HERE ---
 
-avg_accuracy = 0
+start_time = datetime.datetime.now()
 
-start_dt = datetime.datetime.now()
+# create new model 
+model = ArchimedesNetV1().to(device)
 
-for i in range(iterations):
-    # create new model 
-    model = ArchimedesNetV1().to(device)
 
-    # have to create optimizer after model, so define it here:
-    optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
-
-    # train our model:
-    for epoch in range(epochs):
-        print(f"epoch: {epoch}")
+# train our model:
+for epoch in range(epochs):
+        # train for this epoch
         train(
             model = model,
             loss_fn = loss_fn,
@@ -299,23 +295,24 @@ for i in range(iterations):
             dataloader = train_dataloader,
             device = device,
         )
-        accuracy, loss = test(
-            model = model,
-            loss_fn = loss_fn,
-            dataloader = test_dataloader,
-            device = device,
-        )
-    # add current to avg accuracy:
-    avg_accuracy += accuracy
+
+        # every 5 epochs, test our model:
+
+        if (epoch % 5 == 0):
+                accuracy, loss = test(
+                        model = model,
+                        loss_fn = loss_fn,
+                        dataloader = test_dataloader,
+                        device = device,
+                )
+
+                print(f"epoch: {epoch}, accuracy: {accuracy}")
 
 # record end time to get idea of speed:
 end_time = datetime.datetime.now()
 
 training_time = end_time - start_time
 
-# divide by iterations to get average:
-avg_accuracy /= iterations
-
-print(f"final accuracy: {avg_accuracy}, time to train: {training_time}")
+print(f"time to train: {training_time}")
 
 torch.save(model.state_dict(), "model.pth")
