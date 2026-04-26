@@ -229,7 +229,6 @@ def test(dataloader, model, loss_fn, device):
     # calculate loss, accuracy as percentages
     avg_loss = test_loss / size
     accuracy = correct / size
-    print(f"Test Error: \n Accuracy: {(100*accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n")
     return accuracy, avg_loss
 
 
@@ -310,7 +309,7 @@ for epoch in range(epochs):
                         device = device,
                 )
 
-                print(f"epoch: {epoch}, accuracy: {accuracy}")
+                print(f"epoch: {epoch}, accuracy: {(100*accuracy):>0.1f}%")
 
 # record end time to get idea of speed:
 end_time = datetime.datetime.now()
