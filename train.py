@@ -193,7 +193,7 @@ class ArchimedesNetV2(nn.Module):
             ANTransBlock(20, 4, 2),
             # final pooling layer to reduce down, batch norm:
             nn.AvgPool2d(2),
-            nn.BatchNorm2d(36),
+            #nn.BatchNorm2d(4),
             # finally, linear classification:
             nn.Linear(256, 37)
         )
