@@ -152,9 +152,9 @@ class ANDenseBlock(nn.Module):
 
         # declare conv layers here:
         self.conv1 = nn.Conv2d(in_channels, in_channels, 5, padding="same")
-        self.conv2 = nn.Conv2d(in_channels * 2, in_channels, 1, padding="same")
+        self.conv2 = nn.Conv2d(in_channels * 2, in_channels, 3, padding="same")
         self.conv3 = nn.Conv2d(in_channels * 3, in_channels, 5, padding="same")
-        self.conv4 = nn.Conv2d(in_channels * 4, in_channels, 1, padding="same")
+        self.conv4 = nn.Conv2d(in_channels * 4, in_channels, 3, padding="same")
 
     def forward(self, x):
         # y is running output, x is running input:
@@ -198,9 +198,13 @@ class ArchimedesNetV2(nn.Module):
             ANDenseBlock(64),
             ANTransBlock(64, 128, 2),
             ANDenseBlock(128),
-            ANTransBlock(128, 16, 2),
+            ANTransBlock(128, 128, 2),
+            ANDenseBlock(128),
+            ANTransBlock(128, 64, 2),
+            ANDenseBlock(64),
+            ANTransBlock(64, 32, 2),
             nn.Flatten(),
-            nn.Linear(4096, 37),
+            nn.Linear(1024, 37),
         )
 
     def forward(self, x):
@@ -212,7 +216,7 @@ class ArchimedesNetV2(nn.Module):
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNetV1().to(device)
+model = ArchimedesNetV2().to(device)
 
 
 
