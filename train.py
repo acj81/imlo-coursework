@@ -151,7 +151,7 @@ class ANDenseBlock(nn.Module):
 
         for i in range(conv_layers):
             layers += nn.Sequential(
-                nn.Conv2d(in_channels + (growth_rate * i), growth_rate, filter_size),
+                nn.Conv2d(in_channels + (growth_rate * i), growth_rate, filter_size, padding="same"),
                 nn.BatchNorm2d(in_channels + (growth_rate * i)),
                 nn.ReLU(),
             )
