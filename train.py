@@ -196,11 +196,11 @@ class ArchimedesNetV2(nn.Module):
  
         # define our actual architecture:
         self.layers = nn.Sequential(
-            nn.Conv2d(3, 64, 1),
+            nn.Conv2d(3, 32, 1),
+            ANDenseBlock(32),
+            ANTransBlock(32, 64, 2),
             ANDenseBlock(64),
-            ANTransBlock(64, 128, 2),
-            ANDenseBlock(128),
-            ANTransBlock(128, 64, 2),
+            ANTransBlock(64, 64, 2),
             ANDenseBlock(64),
             ANTransBlock(64, 32, 2),
             ANDenseBlock(32),
