@@ -192,7 +192,7 @@ class ArchimedesNetV2(nn.Module):
         super().__init__()
  
         # define our actual architecture:
-        self.layers = (
+        self.layers = nn.Sequential(
             ANDenseBlock(3, 32),
             ANTransBlock(102, 64, 2),
             ANDenseBlock(64, 64),
