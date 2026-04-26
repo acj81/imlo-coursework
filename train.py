@@ -206,7 +206,7 @@ class ArchimedesNetV2(nn.Module):
             ANDenseBlock(32),
             ANTransBlock(32, 16, 2),
             nn.Flatten(),
-            nn.Linear(1024, 512),
+            nn.Linear(4096, 512),
             nn.Dropout(0.1),
             nn.Linear(512, 37),
         )
