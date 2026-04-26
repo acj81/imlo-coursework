@@ -169,7 +169,7 @@ class ANDenseBlock(nn.Module):
         y = x
         for i in range(self.num_layers):
             # convolve, activate using current layer
-            y = self.conv_layers[i](x) 
+            y = self.conv_layers[i + 1](x) 
             y = self.activ(y)
             # concatenate into running input
             x = torch.cat((x, y), 1)
