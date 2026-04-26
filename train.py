@@ -204,7 +204,7 @@ class ArchimedesNetV2(nn.Module):
             ANDenseBlock(64),
             ANTransBlock(64, 32, 2),
             nn.Flatten(),
-            nn.Linear(1024, 37),
+            nn.Linear(512, 37),
         )
 
     def forward(self, x):
