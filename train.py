@@ -223,7 +223,7 @@ def test(dataloader, model, loss_fn, device):
 
         
     # calculate loss, accuracy as percentages
-    avg_loss = test_loss / num_batches
+    avg_loss = test_loss / size
     accuracy = correct / size
     print(f"Test Error: \n Accuracy: {(100*accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n")
     return accuracy, avg_loss
@@ -242,9 +242,7 @@ epochs = 30
 
 loss_fn = nn.CrossEntropyLoss()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
-
-iterations = 5 # get average of 5 test and trian loops to get better picture that accounts for randomness
+iterations = 5 # get average of 5 test and train loops to get better picture that accounts for randomness
 
 # specify test, train datasets:
 train_data = datasets.OxfordIIITPet(
@@ -287,6 +285,9 @@ start_dt = datetime.datetime.now()
 for i in range(iterations):
     # create new model 
     model = ArchimedesNetV1.to(device)
+
+    # have to create optimizer after model, so define it here:
+    optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
 
     # train our model:
     for epoch in range(epochs):
