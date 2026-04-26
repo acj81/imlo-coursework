@@ -152,9 +152,11 @@ class ANDenseBlock(nn.Module):
 
         # declare conv layers here:
         self.conv1 = nn.Conv2d(in_channels, in_channels, 5, padding="same")
-        self.conv2 = nn.Conv2d(in_channels * 2, in_channels, 3, padding="same")
+        self.conv2 = nn.Conv2d(in_channels * 2, in_channels, 1, padding="same")
         self.conv3 = nn.Conv2d(in_channels * 3, in_channels, 5, padding="same")
-        self.conv4 = nn.Conv2d(in_channels * 4, in_channels, 3, padding="same")
+        self.conv4 = nn.Conv2d(in_channels * 4, in_channels, 1, padding="same")
+        self.conv5 = nn.Conv2d(in_channels * 3, in_channels, 5, padding="same")
+        self.conv6 = nn.Conv2d(in_channels * 4, in_channels, 1, padding="same")
 
     def forward(self, x):
         # y is running output, x is running input:
@@ -165,6 +167,10 @@ class ANDenseBlock(nn.Module):
         y = self.activ(self.conv3(x))
         x = torch.concat((y, x), 1)
         y = self.activ(self.conv4(x))
+        x = torch.concat((y, x), 1)
+        y = self.activ(self.conv5(x))
+        x = torch.concat((y, x), 1)
+        y = self.activ(self.conv5(x))
         x = torch.concat((y, x), 1)
         return y
 
@@ -190,20 +196,18 @@ class ArchimedesNetV2(nn.Module):
  
         # define our actual architecture:
         self.layers = nn.Sequential(
-            nn.Conv2d(3, 32, 1),
-            ANDenseBlock(32),
-            ANTransBlock(32, 64, 2),
-            ANDenseBlock(64),
-            ANTransBlock(64, 64, 2),
+            nn.Conv2d(3, 64, 1),
             ANDenseBlock(64),
             ANTransBlock(64, 128, 2),
-            ANDenseBlock(128),
-            ANTransBlock(128, 128, 2),
             ANDenseBlock(128),
             ANTransBlock(128, 64, 2),
             ANDenseBlock(64),
             ANTransBlock(64, 32, 2),
+            ANDenseBlock(32),
+            ANTransBlock(32, 16, 2),
             nn.Flatten(),
+            nn.Linear(1024, 512),
+            nn.Dropout(0.1),
             nn.Linear(512, 37),
         )
 
@@ -217,7 +221,6 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 print(f"Using accelerator: {device}")
 
 model = ArchimedesNetV2().to(device)
-
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
