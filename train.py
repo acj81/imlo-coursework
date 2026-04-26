@@ -157,6 +157,9 @@ class ArchimedesNetV2(nn.Module):
         return x
 
 
+model = ArchimedesNetV1.to(device)
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
