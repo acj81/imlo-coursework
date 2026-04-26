@@ -161,7 +161,7 @@ class ANDenseBlock(nn.Module):
         self.activ = nn.ReLU()
 
         # we declare a list of modules, so we can access them later (HAVE to use ModuleList so gradients track properly):
-        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i], self.in_channels[0], filter_sizes[i]) for i in range(self.num_layers)])
+        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i], self.in_channels[0], filter_sizes[i], padding="same") for i in range(self.num_layers)])
 
 
     def forward(self, x):
@@ -197,6 +197,7 @@ class ArchimedesNetV2(nn.Module):
  
         # define our actual architecture:
         self.layers = nn.Sequential(
+            nn.Conv2d(3, 32, 1),
             ANDenseBlock(32, [5, 3, 3, 1]),
             ANTransBlock(32, 64, 2),
             ANDenseBlock(64, [5, 3, 3, 1]),
