@@ -143,13 +143,68 @@ class ArchimedesNetV1(nn.Module):
         return x
 
 
+class ANDenseBlock(nn.Module):
+    def __init__(self, in_channels, out_a):
+        super().__init__()
+ 
+        out_b = in_channels + out_a
+        out_c = out_a + out_b
+        out_d = out_b + out_c
+        out_e = out_c + out_d
+
+        # define our actual architecture:
+        self.activ = nn.ReLU()
+        
+        self.conv1 = nn.Conv2d(in_channels, out_a, 7, padding="same")
+        self.conv2 = nn.Conv2d(out_b, out_c, 5, padding="same")
+        self.conv3 = nn.Conv2d(out_c, out_d, 3, padding="same")
+        self.conv4 = nn.Conv2d(out_d, out_e, 1, padding="same")
+
+    def forward(self, x):
+        # convolve, activate, concatenate for each layer:
+        x = self.activ(self.conv1(x))
+        y = torch.cat((x, y), 1)
+        x = self.activ(self.conv2(y))
+        y = torch.cat((x, y), 1)
+        x = self.activ(self.conv3(y))
+        y = torch.cat((x, y), 1)
+        x = self.activ(self.conv4(y))
+        return x
+
+
+class ANTransBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, pool_size):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, 1),
+            nn.MaxPool2d(pool_size),
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
 class ArchimedesNetV2(nn.Module):
     def __init__(self):
         super().__init__()
  
         # define our actual architecture:
         self.layers = (
-            #
+            ANDenseBlock(3, 32),
+            ANTransBlock(102, 64, 2),
+            ANDenseBlock(64, 64),
+            ANTransBlock(320, 64, 2),
+            ANDenseBlock(64, 32),
+            ANTransBlock(224, 32, 2),
+            ANDenseBlock(32, 16),
+            ANTransBlock(112, 8, 2),
+            nn.Flatten(),
+            nn.Linear(2048, 512),
+            nn.Dropout(0.2),
+            nn.Linear(512, 37)
         )
 
     def forward(self, x):
