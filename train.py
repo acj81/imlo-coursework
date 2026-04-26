@@ -144,35 +144,28 @@ class ArchimedesNetV1(nn.Module):
 
 
 class ANDenseBlock(nn.Module):
-    def __init__(self, in_channels, filter_sizes):
+    def __init__(self, in_channels):
         super().__init__()
-
-        # get num layers from number of filter sizes given:
-        self.num_layers = len(filter_sizes)
- 
-        # calculate input channels for each layer:
-        self.in_channels = [in_channels, in_channels]
-
-        for _ in range(1, self.num_layers):
-            new_in_channels = sum(self.in_channels)
-            self.in_channels.append(new_in_channels)
 
         # common activation function across all layers:
         self.activ = nn.ReLU()
 
-        # we declare a list of modules, so we can access them later (HAVE to use ModuleList so gradients track properly):
-        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i], self.in_channels[0] * i, filter_sizes[i], padding="same") for i in range(self.num_layers)])
-
+        # declare conv layers here:
+        self.conv1 = nn.Conv2d(in_channels, in_channels, 5)
+        self.conv2 = nn.Conv2d(in_channels * 2, in_channels, 1)
+        self.conv3 = nn.Conv2d(in_channels * 3, in_channels, 5)
+        self.conv4 = nn.Conv2d(in_channels * 4, in_channels, 1)
 
     def forward(self, x):
         # y is running output, x is running input:
-        y = x
-        for i in range(self.num_layers):
-            # convolve, activate using current layer
-            y = self.conv_layers[i](x) 
-            y = self.activ(y)
-            # concatenate into running input
-            x = torch.cat((x, y), 1)
+        y = self.activ(self.conv1(x))
+        x = torch.concat((y, x), 1)
+        y = self.activ(self.conv2(x))
+        x = torch.concat((y, x), 1)
+        y = self.activ(self.conv3(x))
+        x = torch.concat((y, x), 1)
+        y = self.activ(self.conv4(x))
+        x = torch.concat((y, x), 1)
         return y
 
 
@@ -198,13 +191,13 @@ class ArchimedesNetV2(nn.Module):
         # define our actual architecture:
         self.layers = nn.Sequential(
             nn.Conv2d(3, 32, 1),
-            ANDenseBlock(32, [5, 3, 3, 1]),
+            ANDenseBlock(32),
             ANTransBlock(32, 64, 2),
-            ANDenseBlock(64, [5, 3, 3, 1]),
+            ANDenseBlock(64),
             ANTransBlock(64, 64, 2),
-            ANDenseBlock(64, [5, 3, 3, 1]),
+            ANDenseBlock(64),
             ANTransBlock(64, 128, 2),
-            ANDenseBlock(128, [5, 3, 3, 1]),
+            ANDenseBlock(128),
             ANTransBlock(128, 16, 2),
             nn.Flatten(),
             nn.Linear(1024, 37),
