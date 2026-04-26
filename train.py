@@ -144,27 +144,29 @@ class ArchimedesNetV1(nn.Module):
 
 
 class ANDenseBlock(nn.Module):
-    def __init__(self, in_channels):
+    def __init__(self, in_channels, growth_rate):
         super().__init__()
 
-        # common activation function across all layers:
+        # common activation, batch norm functions across all layers:
         self.activ = nn.ReLU()
 
+        self.bn = nn.BatchNorm2d()
+
         # declare conv layers here:
-        self.conv1 = nn.Conv2d(in_channels, in_channels, 5, padding="same")
-        self.conv2 = nn.Conv2d(in_channels * 2, in_channels, 3, padding="same")
-        self.conv3 = nn.Conv2d(in_channels * 3, in_channels, 5, padding="same")
-        self.conv4 = nn.Conv2d(in_channels * 4, in_channels, 3, padding="same")
+        self.conv1 = nn.Conv2d(in_channels, growth_rate, 5, padding="same")
+        self.conv2 = nn.Conv2d(in_channels + growth_rate, growth_rate, 1, padding="same")
+        self.conv3 = nn.Conv2d(in_channels + 2 * growth_rate, growth_rate, 5, padding="same")
+        self.conv4 = nn.Conv2d(in_channels + 3 * growth_rate, growth_rate, 1, padding="same")
 
     def forward(self, x):
         # y is running output, x is running input:
-        y = self.activ(self.conv1(x))
+        y = self.bn(self.activ(self.conv1(x)))
         x = torch.concat((y, x), 1)
-        y = self.activ(self.conv2(x))
+        y = self.bn(self.activ(self.conv2(x)))
         x = torch.concat((y, x), 1)
-        y = self.activ(self.conv3(x))
+        y = self.bn(self.activ(self.conv3(x)))
         x = torch.concat((y, x), 1)
-        y = self.activ(self.conv4(x))
+        y = self.bn(self.activ(self.conv4(x)))
         return y
 
 
@@ -189,13 +191,13 @@ class ArchimedesNetV2(nn.Module):
  
         # define our actual architecture:
         self.layers = nn.Sequential(
-            nn.Conv2d(3, 32, 1),
-            ANDenseBlock(32),
-            ANTransBlock(32, 64, 2),
-            ANDenseBlock(64),
-            ANTransBlock(64, 64, 2),
-            ANDenseBlock(64),
-            ANTransBlock(64, 16, 4),
+            nn.Conv2d(3, 16, 1),
+            ANDenseBlock(16, 8),
+            ANTransBlock(40, 16, 2),
+            ANDenseBlock(16, 8),
+            ANTransBlock(40, 64, 2),
+            ANDenseBlock(64, 8),
+            ANTransBlock(88, 16, 2),
             nn.Flatten(),
             nn.Linear(4096, 512),
             nn.Dropout(0.1),
