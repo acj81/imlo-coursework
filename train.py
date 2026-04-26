@@ -155,8 +155,8 @@ class ANDenseBlock(nn.Module):
         self.conv2 = nn.Conv2d(in_channels * 2, in_channels, 1, padding="same")
         self.conv3 = nn.Conv2d(in_channels * 3, in_channels, 5, padding="same")
         self.conv4 = nn.Conv2d(in_channels * 4, in_channels, 1, padding="same")
-        self.conv5 = nn.Conv2d(in_channels * 3, in_channels, 5, padding="same")
-        self.conv6 = nn.Conv2d(in_channels * 4, in_channels, 1, padding="same")
+        self.conv5 = nn.Conv2d(in_channels * 5, in_channels, 5, padding="same")
+        self.conv6 = nn.Conv2d(in_channels * 6, in_channels, 1, padding="same")
 
     def forward(self, x):
         # y is running output, x is running input:
