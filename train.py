@@ -166,6 +166,7 @@ class ANDenseBlock(nn.Module):
 
 class ANTransBlock(nn.Module):
     def __init__(self, in_channels, out_channels, pool_size):
+        super().__init__()
         self.layers = nn.Sequential(
             nn.BatchNorm2d(in_channels),
             nn.Conv2d(in_channels, out_channels, 1),
