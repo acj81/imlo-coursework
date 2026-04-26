@@ -170,7 +170,7 @@ class ANDenseBlock(nn.Module):
         x = torch.concat((y, x), 1)
         y = self.activ(self.conv5(x))
         x = torch.concat((y, x), 1)
-        y = self.activ(self.conv5(x))
+        y = self.activ(self.conv6(x))
         x = torch.concat((y, x), 1)
         return y
 
