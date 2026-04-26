@@ -161,7 +161,7 @@ class ANDenseBlock(nn.Module):
         self.activ = nn.ReLU()
 
         # we declare a list of modules, so we can access them later (HAVE to use ModuleList so gradients track properly):
-        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i], self.in_channels[0], filter_sizes[i], padding="same") for i in range(self.num_layers)])
+        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i + 1], self.in_channels[0], filter_sizes[i], padding="same") for i in range(self.num_layers)])
 
 
     def forward(self, x):
@@ -169,7 +169,7 @@ class ANDenseBlock(nn.Module):
         y = x
         for i in range(self.num_layers):
             # convolve, activate using current layer
-            y = self.conv_layers[i + 1](x) 
+            y = self.conv_layers[i](x) 
             y = self.activ(y)
             # concatenate into running input
             x = torch.cat((x, y), 1)
