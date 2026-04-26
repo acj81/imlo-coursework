@@ -4,7 +4,7 @@ from torchvision import datasets
 from torchvision import transforms
 from torchvision import models
 from torch import nn
-
+import datetime 
 
 # --- DEFINE MODEL ---
 
@@ -161,10 +161,6 @@ class ArchimedesNetV2(nn.Module):
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNetV1().to(device)
-
-
-
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
 
 # specify function to convert from integer label (0-36 inclusive) to corresponding binary array:
@@ -230,7 +226,7 @@ def test(dataloader, model, loss_fn, device):
     avg_loss = test_loss / num_batches
     accuracy = correct / size
     print(f"Test Error: \n Accuracy: {(100*accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n")
-
+    return accuracy, avg_loss
 
 
 
@@ -248,6 +244,7 @@ loss_fn = nn.CrossEntropyLoss()
 
 optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
 
+iterations = 5 # get average of 5 test and trian loops to get better picture that accounts for randomness
 
 # specify test, train datasets:
 train_data = datasets.OxfordIIITPet(
@@ -280,30 +277,44 @@ test_dataloader = DataLoader(
         shuffle=True,
 )
 
-# test, train then test again to show improvement:
 
-test(
-    model = model,
-    loss_fn = loss_fn,
-    dataloader = test_dataloader,
-    device = device,
-)
+# --- TRAIN AND TEST HERE ---
 
-for i in range(epochs):
-    print(f"epoch: {i}")
-    train(
-        model = model,
-        loss_fn = loss_fn,
-        optimizer = optimizer,
-        dataloader = train_dataloader,
-        device = device,
-    )
+avg_accuracy = 0
 
-test(
-    model = model,
-    loss_fn = loss_fn,
-    dataloader = test_dataloader,
-    device = device,
-)
+start_dt = datetime.datetime.now()
+
+for i in range(iterations):
+    # create new model 
+    model = ArchimedesNetV1.to(device)
+
+    # train our model:
+    for epoch in range(epochs):
+        print(f"epoch: {epoch}")
+        train(
+            model = model,
+            loss_fn = loss_fn,
+            optimizer = optimizer,
+            dataloader = train_dataloader,
+            device = device,
+        )
+        accuracy, loss = test(
+            model = model,
+            loss_fn = loss_fn,
+            dataloader = test_dataloader,
+            device = device,
+        )
+    # add current to avg accuracy:
+    avg_accuracy += accuracy
+
+# record end time to get idea of speed:
+end_time = datetime.datetime.now()
+
+training_time = end_time - start_time
+
+# divide by iterations to get average:
+avg_accuracy /= iterations
+
+print(f"final accuracy: {avg_accuracy}, time to train: {training_time}")
 
 torch.save(model.state_dict(), "model.pth")
