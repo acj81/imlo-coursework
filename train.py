@@ -292,7 +292,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 0.0005
+learn_rate = 0.001
 
 batch_size = 32
 
@@ -338,10 +338,6 @@ test_dataloader = DataLoader(
 # --- TRAIN AND TEST HERE ---
 
 start_time = datetime.datetime.now()
-
-# create new model 
-model = ArchimedesNetV1().to(device)
-
 
 # train our model:
 for epoch in range(epochs):
