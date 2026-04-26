@@ -157,10 +157,11 @@ class ANDenseBlock(nn.Module):
             new_in_channels = sum(self.in_channels)
             self.in_channels.append(new_in_channels)
 
-        # declare our layers, including our array of convolutional layers:
+        # common activation function across all layers:
         self.activ = nn.ReLU()
 
-        self.conv_layers = [nn.Conv2d(self.in_channels[i], out_channels, filter_sizes[i]) for i in range(self.num_layers)]
+        # we declare a list of modules, so we can access them later (HAVE to use ModuleList so gradients track properly):
+        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i], out_channels, filter_sizes[i]) for i in range(self.num_layers)])
 
 
     def forward(self, x):
