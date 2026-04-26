@@ -340,7 +340,7 @@ test_dataloader = DataLoader(
 start_time = datetime.datetime.now()
 
 # train our model:
-for epoch in range(epochs):
+for epoch in range(1, epochs + 1):
         # train for this epoch
         train(
             model = model,
