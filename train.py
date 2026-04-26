@@ -142,47 +142,35 @@ class ArchimedesNetV1(nn.Module):
         x = self.layers(x)
         return x
 
-
 class ANDenseBlock(nn.Module):
-    def __init__(self, in_channels, growth_rate):
+    def __init__(self, in_channels, conv_layers=4, growth_rate=4, filter_size=3):
         super().__init__()
 
-        # common activation, batch norm functions across all layers:
-        self.activ = nn.ReLU()
+        # create our dense layers based on params given:
+        layers = []
 
-        self.bn = nn.BatchNorm2d()
+        for i in range(conv_layers):
+            layers += [
+                nn.BatchNorm2d(in_channels + growth_rate * i),
+                nn.ReLU(),
+                nn.Conv2d(in_channels + growth_rate * i, growth_rate, filter_size),
+            ]
 
-        # declare conv layers here:
-        self.conv1 = nn.Conv2d(in_channels, growth_rate, 5, padding="same")
-        self.conv2 = nn.Conv2d(in_channels + growth_rate, growth_rate, 1, padding="same")
-        self.conv3 = nn.Conv2d(in_channels + 2 * growth_rate, growth_rate, 5, padding="same")
-        self.conv4 = nn.Conv2d(in_channels + 3 * growth_rate, growth_rate, 1, padding="same")
-
-    def forward(self, x):
-        # y is running output, x is running input:
-        y = self.bn(self.activ(self.conv1(x)))
-        x = torch.concat((y, x), 1)
-        y = self.bn(self.activ(self.conv2(x)))
-        x = torch.concat((y, x), 1)
-        y = self.bn(self.activ(self.conv3(x)))
-        x = torch.concat((y, x), 1)
-        y = self.bn(self.activ(self.conv4(x)))
-        return y
-
-
-class ANTransBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, pool_size):
-        super().__init__()
- 
-        # define our actual architecture:
-        self.layers = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, 1),
-            nn.MaxPool2d(pool_size),
-        )
+        # convert an array of modules into sequence, so we can call forward on it
+        self.layers = nn.Sequential(*layers)
 
     def forward(self, x):
         x = self.layers(x)
         return x
+
+
+class ANTransBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, pool_size):
+        self.layers = nn.Sequential(
+            nn.BatchNorm2d(in_channels),
+            nn.Conv2d(in_channels, out_channels, 1),
+            nn.MaxPool2d(pool_size)
+        )
 
 
 class ArchimedesNetV2(nn.Module):
@@ -191,17 +179,22 @@ class ArchimedesNetV2(nn.Module):
  
         # define our actual architecture:
         self.layers = nn.Sequential(
-            nn.Conv2d(3, 16, 1),
-            ANDenseBlock(16, 8),
-            ANTransBlock(40, 16, 2),
-            ANDenseBlock(16, 8),
-            ANTransBlock(40, 64, 2),
-            ANDenseBlock(64, 8),
-            ANTransBlock(88, 32, 2),
-            ANDenseBlock(32, 4),
+            # convolution to extract features
+            nn.Conv2d(3, 32, 1)
+            # dense-trans block combos:
+            ANDenseBlock(32),
+            ANTransBlock(44, 32, 2),
+            ANDenseBlock(32),
             ANTransBlock(44, 16, 2),
-            nn.Flatten(),
-            nn.Linear(11264, 37),
+            ANDenseBlock(16),
+            ANTransBlock(28, 8, 2),
+            ANDenseBlock(8),
+            ANTransBlock(20, 4, 2),
+            # final pooling layer to reduce down, batch norm:
+            nn.AvgPool2d(2),
+            nn.BatchNorm2d(4),
+            # finally, linear classification:
+            nn.Linear(256, 37)
         )
 
     def forward(self, x):
