@@ -173,7 +173,7 @@ class ANDenseBlock(nn.Module):
             y = self.activ(y)
             # concatenate into running input
             x = torch.cat((x, y), 1)
-        return x
+        return y
 
 
 class ANTransBlock(nn.Module):
