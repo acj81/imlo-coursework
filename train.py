@@ -144,16 +144,16 @@ class ArchimedesNetV1(nn.Module):
 
 
 class ANDenseBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, filter_sizes):
+    def __init__(self, in_channels, filter_sizes):
         super().__init__()
 
         # get num layers from number of filter sizes given:
         self.num_layers = len(filter_sizes)
  
         # calculate input channels for each layer:
-        self.in_channels = [in_channels, in_channels + out_channels]
+        self.in_channels = [in_channels]
 
-        for _ in range(self.num_layers):
+        for _ in range(1, self.num_layers):
             new_in_channels = sum(self.in_channels)
             self.in_channels.append(new_in_channels)
 
@@ -161,7 +161,7 @@ class ANDenseBlock(nn.Module):
         self.activ = nn.ReLU()
 
         # we declare a list of modules, so we can access them later (HAVE to use ModuleList so gradients track properly):
-        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i], out_channels, filter_sizes[i]) for i in range(self.num_layers)])
+        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i], self.in_channels[0], filter_sizes[i]) for i in range(self.num_layers)])
 
 
     def forward(self, x):
@@ -197,18 +197,16 @@ class ArchimedesNetV2(nn.Module):
  
         # define our actual architecture:
         self.layers = nn.Sequential(
-            ANDenseBlock(3, 32, [5, 3, 3, 1]),
-            ANTransBlock(32, 32, 2),
-            ANDenseBlock(32, 64, [5, 3, 3, 1]),
-            ANTransBlock(64, 32, 2),
-            ANDenseBlock(32, 64, [5, 3, 3, 1]),
-            ANTransBlock(64, 32, 2),
-            ANDenseBlock(32, 128, [5, 3, 3, 1]),
+            ANDenseBlock(32, [5, 3, 3, 1]),
+            ANTransBlock(32, 64, 2),
+            ANDenseBlock(64, [5, 3, 3, 1]),
+            ANTransBlock(64, 64, 2),
+            ANDenseBlock(64, [5, 3, 3, 1]),
+            ANTransBlock(64, 128, 2),
+            ANDenseBlock(128, [5, 3, 3, 1]),
             ANTransBlock(128, 16, 2),
             nn.Flatten(),
-            nn.Linear(2048, 512),
-            nn.Dropout(0.2),
-            nn.Linear(512, 37)
+            nn.Linear(1024, 37),
         )
 
     def forward(self, x):
