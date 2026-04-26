@@ -160,7 +160,7 @@ class ANDenseBlock(nn.Module):
         # declare our layers, including our array of convolutional layers:
         self.activ = nn.ReLU()
 
-        self.conv_layers = [nn.Conv2d(self.in_channels[i], out_channels, self.filter_sizes[i]) for i in range(self.num_layers)]
+        self.conv_layers = [nn.Conv2d(self.in_channels[i], out_channels, filter_sizes[i]) for i in range(self.num_layers)]
 
 
     def forward(self, x):
