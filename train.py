@@ -151,9 +151,9 @@ class ANDenseBlock(nn.Module):
 
         for i in range(conv_layers):
             layers += nn.Sequential(
+                nn.Conv2d(in_channels + (growth_rate * i), growth_rate, filter_size),
                 nn.BatchNorm2d(in_channels + (growth_rate * i)),
                 nn.ReLU(),
-                nn.Conv2d(in_channels + (growth_rate * i), growth_rate, filter_size),
             )
 
         # convert an array of modules into sequence, so we can call forward on it
