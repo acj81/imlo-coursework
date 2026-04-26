@@ -284,7 +284,7 @@ start_dt = datetime.datetime.now()
 
 for i in range(iterations):
     # create new model 
-    model = ArchimedesNetV1.to(device)
+    model = ArchimedesNetV1().to(device)
 
     # have to create optimizer after model, so define it here:
     optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
