@@ -161,7 +161,7 @@ class ANDenseBlock(nn.Module):
         self.activ = nn.ReLU()
 
         # we declare a list of modules, so we can access them later (HAVE to use ModuleList so gradients track properly):
-        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i + 1], self.in_channels[0], filter_sizes[i], padding="same") for i in range(self.num_layers)])
+        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i], self.in_channels[i], filter_sizes[i], padding="same") for i in range(self.num_layers)])
 
 
     def forward(self, x):
