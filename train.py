@@ -151,9 +151,9 @@ class ANDenseBlock(nn.Module):
         self.num_layers = len(filter_sizes)
  
         # calculate input channels for each layer:
-        self.in_channels = [in_channels]
+        self.in_channels = [in_channels, in_channels]
 
-        for _ in range(self.num_layers):
+        for _ in range(1, self.num_layers):
             new_in_channels = sum(self.in_channels)
             self.in_channels.append(new_in_channels)
 
@@ -161,7 +161,7 @@ class ANDenseBlock(nn.Module):
         self.activ = nn.ReLU()
 
         # we declare a list of modules, so we can access them later (HAVE to use ModuleList so gradients track properly):
-        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i], self.in_channels[i], filter_sizes[i], padding="same") for i in range(self.num_layers)])
+        self.conv_layers = nn.ModuleList([nn.Conv2d(self.in_channels[i], self.in_channels[0] * i, filter_sizes[i], padding="same") for i in range(self.num_layers)])
 
 
     def forward(self, x):
