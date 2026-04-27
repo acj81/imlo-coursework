@@ -231,14 +231,13 @@ class ArchimedesNetV3(nn.Module):
             ANTransBlock(56, 52, 2),
             ANDenseBlock(52),
             ANTransBlock(68, 32, 2),
+            ANDenseBlock(32),
+            ANTransBlock(48, 32, 2),
             # final pooling layer to reduce down, batch norm:
             nn.AvgPool2d(2),
             nn.BatchNorm2d(32),
             # finally, linear classification:
             nn.Flatten(),
-            nn.Linear(512, 256),
-            nn.ReLU(),
-            nn.Dropout(0.1),
             nn.Linear(256, 37),
         )
 
