@@ -230,7 +230,7 @@ class ArchimedesNetV3(nn.Module):
             ANDenseBlock(40),
             ANTransBlock(56, 52, 2),
             ANDenseBlock(52),
-            ANTransBlock(80, 16, 2),
+            ANTransBlock(68, 16, 2),
             # final pooling layer to reduce down, batch norm:
             nn.AvgPool2d(2),
             nn.BatchNorm2d(4),
