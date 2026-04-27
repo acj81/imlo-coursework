@@ -237,9 +237,9 @@ class ArchimedesNetV3(nn.Module):
             nn.BatchNorm2d(64),
             # finally, linear classification:
             nn.Flatten(),
-            nn.Linear(512, 128),
+            nn.Linear(1024, 512),
             nn.Dropout(0.1),
-            nn.Linear(128, 37)
+            nn.Linear(512, 37)
         )
 
     def forward(self, x):
