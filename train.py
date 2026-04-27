@@ -192,13 +192,13 @@ class ArchimedesNetV2(nn.Module):
             nn.Conv2d(3, 32, 1),
             # dense-trans block combos:
             ANDenseBlock(32),
-            ANTransBlock(44, 32, 2),
+            ANTransBlock(48, 32, 2),
             ANDenseBlock(32),
-            ANTransBlock(44, 16, 2),
+            ANTransBlock(48, 16, 2),
             ANDenseBlock(16),
-            ANTransBlock(28, 8, 2),
+            ANTransBlock(32, 8, 2),
             ANDenseBlock(8),
-            ANTransBlock(20, 4, 2),
+            ANTransBlock(24, 4, 2),
             # final pooling layer to reduce down, batch norm:
             nn.AvgPool2d(2),
             nn.BatchNorm2d(4),
