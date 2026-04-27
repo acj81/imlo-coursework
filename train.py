@@ -230,15 +230,17 @@ class ArchimedesNetV3(nn.Module):
             ANDenseBlock(40),
             ANTransBlock(56, 52, 2),
             ANDenseBlock(52),
-            ANTransBlock(68, 32, 2),
+            ANTransBlock(68, 64, 2),
             ANDenseBlock(32),
-            ANTransBlock(48, 32, 2),
+            ANTransBlock(80, 64, 2),
             # final pooling layer to reduce down, batch norm:
             nn.AvgPool2d(2),
-            nn.BatchNorm2d(32),
+            nn.BatchNorm2d(64),
             # finally, linear classification:
             nn.Flatten(),
-            nn.Linear(128, 37),
+            nn.Linear(128, 1024),
+            nn.Dropout(0.1),
+            nn.Linear(1024, 37)
         )
 
     def forward(self, x):
