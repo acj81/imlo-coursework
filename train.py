@@ -374,7 +374,6 @@ class ArchimedesNetV11(nn.Module):
             ANDenseBlock(204, conv_layers=30, growth_rate=16),
             ANTransBlock(684, 342, 4),
             ANDenseBlock(342, conv_layers=6, growth_rate=16),
-            ANTransBlock(438, 89, 4),
             # final pooling layer to reduce down, batch norm:
             nn.BatchNorm2d(438),
             # finally, linear classification:
