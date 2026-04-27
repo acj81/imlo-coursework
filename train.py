@@ -203,7 +203,8 @@ class ArchimedesNetV2(nn.Module):
             nn.AvgPool2d(2),
             nn.BatchNorm2d(4),
             # finally, linear classification:
-            nn.Linear(256, 37)
+            nn.Flatten(),
+            nn.Linear(4096, 37)
         )
 
     def forward(self, x):
