@@ -212,7 +212,7 @@ class ArchimedesNetV2(nn.Module):
         return x
 
 
-class ArchimedesNetV3(nn.Module):
+class ArchimedesNetV7(nn.Module):
     def __init__(self):
         super().__init__()
  
@@ -248,12 +248,47 @@ class ArchimedesNetV3(nn.Module):
         return x
 
 
+class ArchimedesNetV8(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # convolution to extract features
+            nn.Conv2d(3, 64, 1),
+            # dense-trans block combos:
+            ANDenseBlock(64),
+            ANTransBlock(80, 68, 2),
+            ANDenseBlock(68),
+            ANTransBlock(84, 72, 2),
+            ANDenseBlock(72),
+            ANTransBlock(88, 76, 2),
+            ANDenseBlock(76),
+            ANTransBlock(92, 80, 2),
+            ANDenseBlock(80),
+            ANTransBlock(96, 84, 2),
+            ANDenseBlock(84),
+            ANTransBlock(100, 88, 2),
+            # final pooling layer to reduce down, batch norm:
+            nn.BatchNorm2d(88),
+            # finally, linear classification:
+            nn.Flatten(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(512, 37)
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
 
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNetV3().to(device)
+model = ArchimedesNetV8().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
