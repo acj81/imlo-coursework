@@ -177,6 +177,10 @@ class ANTransBlock(nn.Module):
             nn.MaxPool2d(pool_size)
         )
 
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
 
 class ArchimedesNetV2(nn.Module):
     def __init__(self):
