@@ -273,7 +273,7 @@ class ArchimedesNetV8(nn.Module):
             nn.BatchNorm2d(88),
             # finally, linear classification:
             nn.Flatten(),
-            nn.Linear(1024, 512),
+            nn.Linear(1408, 512),
             nn.ReLU(),
             nn.Dropout(0.1),
             nn.Linear(512, 37)
