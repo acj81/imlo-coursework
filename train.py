@@ -300,16 +300,16 @@ class ArchimedesNetV9(nn.Module):
             ANDenseBlock(72, conv_layers=5),
             ANTransBlock(92, 76, 2),
             ANDenseBlock(76, conv_layers=5),
-            ANTransBlock(92, 80, 2),
+            ANTransBlock(96, 80, 2),
             ANDenseBlock(80, conv_layers=5),
             ANTransBlock(100, 84, 2),
             ANDenseBlock(84, conv_layers=5),
-            ANTransBlock(84, 64, 2),
+            ANTransBlock(104, 64, 2),
             # final pooling layer to reduce down, batch norm:
             nn.BatchNorm2d(64),
             # finally, linear classification:
             nn.Flatten(),
-            nn.Linear(1024, 512),
+            nn.Linear(, 512),
             nn.ReLU(),
             nn.Dropout(0.1),
             nn.Linear(512, 37)
