@@ -284,6 +284,79 @@ class ArchimedesNetV8(nn.Module):
         return x
 
 
+class ArchimedesNetV9(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # convolution to extract features
+            nn.Conv2d(3, 64, 1),
+            # dense-trans block combos:
+            ANDenseBlock(64, num_layers=5),
+            ANTransBlock(84, 68, 2),
+            ANDenseBlock(68, num_layers=5),
+            ANTransBlock(88, 72, 2),
+            ANDenseBlock(72, num_layers=5),
+            ANTransBlock(92, 76, 2),
+            ANDenseBlock(76, num_layers=5),
+            ANTransBlock(92, 80, 2),
+            ANDenseBlock(80, num_layers=5),
+            ANTransBlock(100, 84, 2),
+            ANDenseBlock(84, num_layers=5),
+            ANTransBlock(84, 64, 2),
+            # final pooling layer to reduce down, batch norm:
+            nn.BatchNorm2d(64),
+            # finally, linear classification:
+            nn.Flatten(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(512, 37)
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
+class ArchimedesNetV10(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # convolution to extract features
+            nn.Conv2d(3, 64, 1),
+            # dense-trans block combos:
+            ANDenseBlock(64, num_layers=5, growth_rate=5),
+            ANTransBlock(89, 69, 2),
+            ANDenseBlock(69, num_layers=5, growth_rate=5),
+            ANTransBlock(94, 74, 2),
+            ANDenseBlock(74, num_layers=5, growth_rate=5),
+            ANTransBlock(99, 79, 2),
+            ANDenseBlock(79, num_layers=5, growth_rate=5),
+            ANTransBlock(104, 84, 2),
+            ANDenseBlock(84, num_layers=5, growth_rate=5),
+            ANTransBlock(109, 89, 2),
+            ANDenseBlock(89, num_layers=5, growth_rate=5),
+            ANTransBlock(114, 96, 2),
+            # final pooling layer to reduce down, batch norm:
+            nn.BatchNorm2d(96),
+            # finally, linear classification:
+            nn.Flatten(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(512, 37)
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
@@ -363,7 +436,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 0.0001
+learn_rate = 0.001
 
 batch_size = 16
 
