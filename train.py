@@ -398,17 +398,17 @@ class ArchimedesNetV12(nn.Module):
             # convolution to extract features
             nn.Conv2d(3, 6, 1),
             # dense-trans block combos:
-            ANDenseBlock(6, conv_layers=6, growth_rate=32),
-            ANTransBlock(198, 99, 2),
-            ANDenseBlock(99, conv_layers=12, growth_rate=32),
-            ANTransBlock(483, 241, 4),
-            ANDenseBlock(241, conv_layers=18, growth_rate=32),
-            ANTransBlock(817, 409, 4),
-            ANDenseBlock(409, conv_layers=30, growth_rate=32),
-            ANTransBlock(1369, 685, 4),
-            ANDenseBlock(685, conv_layers=6, growth_rate=32),
+            ANDenseBlock(6, conv_layers=6, growth_rate=24),
+            ANTransBlock(150, 75, 2),
+            ANDenseBlock(75, conv_layers=12, growth_rate=24),
+            ANTransBlock(363, 182, 4),
+            ANDenseBlock(182, conv_layers=18, growth_rate=24),
+            ANTransBlock(614, 307, 4),
+            ANDenseBlock(307, conv_layers=30, growth_rate=24),
+            ANTransBlock(1027, 514, 4),
+            ANDenseBlock(514, conv_layers=6, growth_rate=24),
             # final pooling layer to reduce down, batch norm:
-            nn.BatchNorm2d(877),
+            nn.BatchNorm2d(514),
             # finally, linear classification:
             nn.Flatten(),
             nn.Linear(1752, 512),
