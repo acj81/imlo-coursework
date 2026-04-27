@@ -146,7 +146,7 @@ class ANDenseBlock(nn.Module):
     def __init__(self, in_channels, conv_layers=4, growth_rate=4, filter_size=3):
         super().__init__()
 
-        # create our dense layers based on params given:
+        # create our convolutional layers based on params given:
         layers = []
 
         for i in range(conv_layers):
@@ -291,7 +291,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 0.0005
+learn_rate = 0.0001
 
 batch_size = 16
 
