@@ -483,6 +483,38 @@ class ArchimedesNetV14(nn.Module):
         return x
 
 
+class ArchimedesNetV15(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        self.layers = nn.Sequential(
+            # convolution to extract features
+            nn.Conv2d(3, 6, 1),
+            # dense-trans block combos:
+            ANDenseBlock(6, conv_layers=6, growth_rate=24, filter_size=3),
+            ANTransBlock(150, 75, 2),
+            ANDenseBlock(75, conv_layers=12, growth_rate=24, filter_size=3),
+            ANTransBlock(363, 182, 4),
+            ANDenseBlock(182, conv_layers=18, growth_rate=24, filter_size=5),
+            ANTransBlock(614, 307, 4),
+            ANDenseBlock(307, conv_layers=30, growth_rate=24, filter_size=7),
+            ANTransBlock(1027, 514, 4),
+            ANDenseBlock(514, conv_layers=6, growth_rate=24, filter_size=3),
+            # final pooling layer to reduce down, batch norm:
+            nn.BatchNorm2d(658),
+            # finally, linear classification:
+            nn.Flatten(),
+            nn.Linear(2632, 512),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(512, 37)
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
