@@ -444,7 +444,7 @@ class ArchimedesNetV13(nn.Module):
             nn.AvgPool2d(2),
             # linear classifier:
             nn.Flatten(),
-            nn.Linear(1024,37),
+            nn.Linear(7296,37),
         )
 
     def forward(self, x):
