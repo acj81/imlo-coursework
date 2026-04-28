@@ -443,6 +443,7 @@ class ArchimedesNetV13(nn.Module):
             nn.BatchNorm2d(114),
             nn.AvgPool2d(2),
             # linear classifier:
+            nn.Flatten(),
             nn.Linear(1024,37),
         )
 
