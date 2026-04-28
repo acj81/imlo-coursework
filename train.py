@@ -422,7 +422,7 @@ class ArchimedesNetV12(nn.Module):
         return x
 
 
-class ArchimedesNetV12(nn.Module):
+class ArchimedesNetV13(nn.Module):
     def __init__(self):
         super().__init__()
  
@@ -455,7 +455,7 @@ class ArchimedesNetV12(nn.Module):
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNetV12().to(device)
+model = ArchimedesNetV13().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
