@@ -431,14 +431,14 @@ class ArchimedesNetV13(nn.Module):
             # convolution to extract features
             nn.Conv2d(3, 6, 1),
             # dense-trans block combos:
-            nn.ANDense(6, conv_layers=6, growth_rate=32),
-            nn.ANTrans(198, 49),
-            nn.ANDense(49, conv_layers=12, growth_rate=32),
-            nn.ANTrans(433, 109),
-            nn.ANDense(109, conv_layers=30, growth_rate=32),
-            nn.ANTrans(1069, 267),
-            nn.ANDense(267, conv_layers=6, growth_rate=32),
-            nn.ANTrans(459, 114),
+            ANDense(6, conv_layers=6, growth_rate=32),
+            ANTrans(198, 49),
+            ANDense(49, conv_layers=12, growth_rate=32),
+            ANTrans(433, 109),
+            ANDense(109, conv_layers=30, growth_rate=32),
+            ANTrans(1069, 267),
+            ANDense(267, conv_layers=6, growth_rate=32),
+            ANTrans(459, 114),
             # final batch norm, avg pool to reduce features:
             nn.BatchNorm2d(114),
             nn.AvgPool2d(2),
