@@ -169,7 +169,7 @@ class ANDenseBlock(nn.Module):
 
 
 class ANTransBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, pool_size):
+    def __init__(self, in_channels, out_channels, pool_size=2):
         super().__init__()
         self.layers = nn.Sequential(
             nn.Conv2d(in_channels, out_channels, 1),
@@ -421,6 +421,34 @@ class ArchimedesNetV12(nn.Module):
         x = self.layers(x)
         return x
 
+
+class ArchimedesNetV12(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # convolution to extract features
+            nn.Conv2d(3, 6, 1),
+            # dense-trans block combos:
+            nn.ANDense(6, conv_layers=6, growth_rate=32),
+            nn.ANTrans(198, 49),
+            nn.ANDense(49, conv_layers=12, growth_rate=32),
+            nn.ANTrans(433, 109),
+            nn.ANDense(109, conv_layers=30, growth_rate=32),
+            nn.ANTrans(1069, 267),
+            nn.ANDense(267, conv_layers=6, growth_rate=32),
+            nn.ANTrans(459, 114),
+            # final batch norm, avg pool to reduce features:
+            nn.BatchNorm2d(114),
+            nn.AvgPool2d(2),
+            # linear classifier:
+            nn.Linear(1024,37),
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
 
 
 # handle accelerators i.e. GPU - if one available, should use that:
