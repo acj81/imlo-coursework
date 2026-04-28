@@ -515,11 +515,208 @@ class ArchimedesNetV15(nn.Module):
         return x
 
 
+class ArchimedesNetV16(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # convolution to extract features
+            nn.Conv2d(3, 6, 1),
+            # dense-trans block combos:
+            ANDenseBlock(6, conv_layers=6, growth_rate=24),
+            ANTransBlock(150, 75, 2),
+            ANDenseBlock(75, conv_layers=12, growth_rate=24),
+            ANTransBlock(363, 182, 2),
+            ANDenseBlock(182, conv_layers=12, growth_rate=24),
+            ANTransBlock(470, 235, 2),
+            ANDenseBlock(235, conv_layers=18, growth_rate=24),
+            ANTransBlock(667, 333, 2),
+            ANDenseBlock(333, conv_layers=18, growth_rate=24),
+            ANTransBlock(765, 382, 2),
+            ANDenseBlock(382, conv_layers=30, growth_rate=24),
+            ANTransBlock(1102, 551, 2),
+            ANDenseBlock(551, conv_layers=12, growth_rate=24),
+            ANTransBlock(839, 420, 2),
+            # final pooling layer to reduce down, batch norm:
+            nn.BatchNorm2d(420),
+            # finally, linear classification:
+            nn.Flatten(),
+            nn.Linear(6720, 512),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(512, 37)
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
+class ArchimedesNetV17(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # convolution to extract features
+            nn.Conv2d(3, 6, 1),
+            # dense-trans block combos:
+            ANDenseBlock(6, conv_layers=6, growth_rate=24),
+            ANTransBlock(150, 75, 2),
+            ANDenseBlock(75, conv_layers=12, growth_rate=24),
+            ANTransBlock(363, 182, 2),
+            ANDenseBlock(182, conv_layers=12, growth_rate=24),
+            ANTransBlock(470, 235, 2),
+            ANDenseBlock(235, conv_layers=18, growth_rate=24),
+            ANTransBlock(667, 333, 2),
+            ANDenseBlock(333, conv_layers=18, growth_rate=24),
+            ANTransBlock(765, 382, 2),
+            ANDenseBlock(382, conv_layers=30, growth_rate=24),
+            ANTransBlock(1102, 551, 2),
+            # final pooling layer to reduce down, batch norm:
+            nn.BatchNorm2d(551),
+            # finally, linear classification:
+            nn.Flatten(),
+            nn.Linear(8816, 512),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(512, 128),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(128, 37)
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
+class ArchimedesNetV18(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture here:
+        self.final_pool = nn.AvgPool2d(2)
+        self.pool8 = nn.MaxPool2d(8)
+        
+        self.conv1 = nn.Conv2d(3, 6, 1)
+
+        self.dense_1 = nn.Sequential(
+            ANDenseBlock(6, growth_rate=8),
+            ANTransBlock(38, 19),
+            ANDenseBlock(19, growth_rate=8),
+            ANTransBlock(51, 26),
+            ANDenseBlock(26, growth_rate=8),
+            ANTransBlock(58, 29),
+            ANDenseBlock(29, growth_rate=8),
+        )
+
+
+        self.dense_2 = nn.Sequential(
+            ANDenseBlock(67, growth_rate=8),
+            ANTransBlock(99, 50),
+            ANDenseBlock(50, growth_rate=8),
+            ANTransBlock(82, 41),
+            ANDenseBlock(41, growth_rate=8),
+            ANTransBlock(73, 37),
+            ANDenseBlock(37, growth_rate=8),
+        )
+
+        self.lc = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(1088,512),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(512, 37),
+        )
+
+    def forward(self, x):
+        # first dense layer
+        y = self.dense_1(x)
+        # pool so we can concatenate
+        x = self.pool8(x)
+        x = torch.cat((y, x), 1)
+        # 2nd dense, concatenate again
+        y = self.dense_2(x)
+        x = self.pool8(x)
+        x = torch.cat((y, x), 1)
+        # final pool before classification
+        x = self.final_pool(x)
+        # linear classifier:
+        x = self.lc(x)
+        return x
+
+
+class ArchimedesNetV19(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture here:
+        self.pool8 = nn.MaxPool2d(8)
+        
+        self.conv1 = nn.Conv2d(3, 6, 1)
+
+        self.dense_1 = nn.Sequential(
+            ANDenseBlock(6, growth_rate=8),
+            ANTransBlock(38, 19),
+            ANDenseBlock(19, growth_rate=8),
+            ANTransBlock(51, 26),
+            ANDenseBlock(26, growth_rate=8),
+            ANTransBlock(58, 29),
+            ANDenseBlock(29, growth_rate=8),
+        )
+
+
+        self.dense_2 = nn.Sequential(
+            ANDenseBlock(67, growth_rate=8),
+            ANTransBlock(99, 50),
+            ANDenseBlock(50, growth_rate=8),
+            ANTransBlock(82, 41),
+            ANDenseBlock(41, growth_rate=8),
+            ANTransBlock(73, 37),
+            ANDenseBlock(37, growth_rate=8),
+        )
+
+        self.dense_2 = nn.Sequential(
+            ANDenseBlock(37, growth_rate=8),
+            ANTransBlock(69, 35),
+            ANDenseBlock(35, growth_rate=8),
+            ANTransBlock(67, 34),
+            ANDenseBlock(34, growth_rate=8),
+            ANTransBlock(66, 33),
+            ANDenseBlock(33, growth_rate=8),
+        )
+
+        self.lc = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(201,37),
+        )
+
+    def forward(self, x):
+        # first dense layer
+        y = self.dense_1(x)
+        # pool so we can concatenate
+        x = self.pool8(x)
+        x = torch.cat((y, x), 1)
+        # 2nd dense, concatenate again
+        y = self.dense_2(x)
+        x = self.pool8(x)
+        x = torch.cat((y, x), 1)
+        # 3rd dense, concatenate again:
+        y = self.dense_3(x)
+        x = self.pool8(x)
+        x = torch.cat((y, x), 1)
+        # linear classifier:
+        x = self.lc(x)
+        return x
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNetV14().to(device)
+model = ArchimedesNetV15().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
