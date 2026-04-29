@@ -793,6 +793,64 @@ class ArchimedesNetV20(nn.Module):
         return x
 
 
+class ArchimedesNetV21(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # define our actual architecture here:
+
+        self.pool_16 = nn.MaxPool2d(16)
+
+        self.final_pool = nn.AvgPool2d(4)
+
+        self.dense_1 = nn.Sequential(
+            # dense-trans block combos:
+            ANDenseBlock(3, conv_layers=6, growth_rate=24),
+            ANTransBlock(147, 30, 2),
+            ANDenseBlock(30, conv_layers=12, growth_rate=24),
+            ANTransBlock(318, 63, 2),
+            ANDenseBlock(63, conv_layers=18, growth_rate=24),
+            ANTransBlock(495, 99, 2),
+            ANDenseBlock(99, conv_layers=30, growth_rate=24),
+            ANTransBlock(819, 409, 2),
+            ANDenseBlock(409, conv_layers=6, growth_rate=24),
+            ANTransBlock(553, 276, 1),
+        )
+
+        self.dense_2 = nn.Sequential(
+            # dense-trans block combos:
+            ANDenseBlock(276, conv_layers=6, growth_rate=24),
+            ANTransBlock(420, 84, 2),
+            ANDenseBlock(84, conv_layers=12, growth_rate=24),
+            ANTransBlock(372, 75, 2),
+            ANDenseBlock(75, conv_layers=18, growth_rate=24),
+            ANTransBlock(507, 101, 2),
+            ANDenseBlock(101, conv_layers=30, growth_rate=24),
+            ANTransBlock(821, 165, 2),
+            ANDenseBlock(165, conv_layers=6, growth_rate=24),
+            ANTransBlock(309, 62, 1),
+        )
+
+        self.lc = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Linear(512, 37),
+        )
+
+    def forward(self, x):
+        # dense layers:
+        y = self.dense_1(x)
+        x = self.pool_16(x)
+        x = torch.cat((x, y), 1)
+        y = self.dense_16(x)
+        x = self.pool_16(x)
+        x = torch.cat((x, y), 1)
+        # linear classifier:
+        x = self.final_pool(x)
+        x = self.lc(x)
+        return x
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
