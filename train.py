@@ -1004,7 +1004,7 @@ class ArchimedesNetV25(nn.Module):
             nn.Conv2d(3, 6, 1),
             # dense-trans block combos:
             ANDenseBlock(6, conv_layers=6, growth_rate=24),
-            ANTransBlock(250, 75),
+            ANTransBlock(150, 75),
             ANDenseBlock(75, conv_layers=12, growth_rate=24),
             ANTransBlock(363, 181),
             ANDenseBlock(181, conv_layers=48, growth_rate=24),
