@@ -706,7 +706,6 @@ class ArchimedesNetV19(nn.Module):
         x = torch.cat((y, x), 1)
         # 3rd dense, concatenate again:
         y = self.dense_3(x)
-        x = self.pool8(x)
         x = torch.cat((y, x), 1)
         # linear classifier:
         x = self.lc(x)
