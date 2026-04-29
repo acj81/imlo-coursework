@@ -916,6 +916,7 @@ class ArchimedesNetV22(nn.Module):
 
     def forward(self, x):
         # dense layers:
+        x = self.conv_1(x)
         y = self.dense_1(x)
         x = self.pool_8(x)
         x = torch.cat((x, y), 1)
