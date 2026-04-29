@@ -994,12 +994,64 @@ class ArchimedesNetV24(nn.Module):
         return x
 
 
+class ArchimedesNetV25(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # convolution to extract features
+            nn.Conv2d(3, 6, 1),
+            # dense-trans block combos:
+            ANDenseBlock(6, conv_layers=6, growth_rate=32),
+            ANTransBlock(198, 99),
+            ANDenseBlock(99, conv_layers=12, growth_rate=32),
+            ANTransBlock(483, 242),
+            ANDenseBlock(242, conv_layers=48, growth_rate=32),
+            ANTransBlock(1778, 889),
+            ANDenseBlock(889, conv_layers=32, growth_rate=32),
+            ANTransBlock(1913, 957),
+            # final pooling layer to reduce down:
+            nn.AvgPool2d(2),
+            # finally, linear classification:
+            nn.Flatten(),
+            nn.Linear(61248, 1024),
+            nn.LeakyReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(1024, 128),
+            nn.LeakyReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(128, 37),
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
+class ANFeatureMixer(nn.Module):
+    def __init__(self, in_channels, out_size):
+        super().__init__()
+
+        # architecture here
+        self.layers = nn.Sequential(
+            nn.Conv2d(in_channels, in_channels, 7, padding="same"),
+            nn.LayerNorm2d(in_channels),
+            nn.Flatten(),
+            nn.Linear(in_channels, 4 * in_channels),
+            nn.GeLU(),
+            nn.Linear(4 * in_channels, out_size)
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+
 
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNetV22().to(device)
+model = ArchimedesNetV23().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
