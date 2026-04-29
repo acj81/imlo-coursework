@@ -857,7 +857,7 @@ class ArchimedesNetV22(nn.Module):
         super().__init__()
         # define our actual architecture here:
 
-        self.pool_8= nn.MaxPool2d(8)
+        self.pool_4 = nn.MaxPool2d(4)
 
         self.final_pool = nn.AvgPool2d(4)
 
@@ -918,10 +918,13 @@ class ArchimedesNetV22(nn.Module):
         # dense layers:
         x = self.conv_1(x)
         y = self.dense_1(x)
-        x = self.pool_8(x)
+        x = self.pool_4(x)
         x = torch.cat((x, y), 1)
-        y = self.dense_16(x)
-        x = self.pool_8(x)
+        y = self.dense_2(x)
+        x = self.pool_4(x)
+        x = torch.cat((x, y), 1)
+        y = self.dense_3(x)
+        x = self.pool_4(x)
         x = torch.cat((x, y), 1)
         # linear classifier:
         x = self.final_pool(x)
