@@ -735,17 +735,17 @@ class ArchimedesNetV20(nn.Module):
         )
         self.dense_2 = nn.Sequential(
             ANDenseBlock(34, growth_rate=8),
-            ANTransBlock(37, 19, pool_size=1),
-            ANDenseBlock(19, growth_rate=8),
-            ANTransBlock(51, 26, pool_size=1),
-            ANDenseBlock(26, growth_rate=8),
-            ANTransBlock(58, 29, pool_size=1),
-            ANDenseBlock(29, growth_rate=8),
-            ANTransBlock(61, 31, pool_size=2),
+            ANTransBlock(66, 33, pool_size=1),
+            ANDenseBlock(33, growth_rate=8),
+            ANTransBlock(65, 32, pool_size=1),
+            ANDenseBlock(32, growth_rate=8),
+            ANTransBlock(64, 32, pool_size=1),
+            ANDenseBlock(32, growth_rate=8),
+            ANTransBlock(64, 32, pool_size=2),
         )
         self.dense_3 = nn.Sequential(
-            ANDenseBlock(65, growth_rate=8),
-            ANTransBlock(97, 49, pool_size=1),
+            ANDenseBlock(66, growth_rate=8),
+            ANTransBlock(98, 49, pool_size=1),
             ANDenseBlock(49, growth_rate=8),
             ANTransBlock(81, 41, pool_size=1),
             ANDenseBlock(41, growth_rate=8),
