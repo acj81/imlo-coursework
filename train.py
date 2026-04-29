@@ -685,12 +685,12 @@ class ArchimedesNetV19(nn.Module):
             ANTransBlock(116, 58),
             ANDenseBlock(58, growth_rate=8),
             ANTransBlock(90, 45, pool_size=1),
-            ANDenseBlock(77, growth_rate=8),
+            ANDenseBlock(45, growth_rate=8),
         )
 
         self.lc = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(245,37),
+            nn.Linear(213,37),
         )
 
     def forward(self, x):
