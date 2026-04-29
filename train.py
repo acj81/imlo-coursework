@@ -1051,7 +1051,7 @@ class ANFeatureMixer(nn.Module):
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNetV24().to(device)
+model = ArchimedesNetV25().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
@@ -1128,7 +1128,7 @@ def test(dataloader, model, loss_fn, device):
 
 learn_rate = 0.0001
 
-batch_size = 8
+batch_size = 16
 
 epochs = 30
 
