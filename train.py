@@ -1070,13 +1070,13 @@ class ArchimedesNetV26(nn.Module):
             # finally, linear classification:
             nn.Flatten(),
             nn.Linear(2632, 10528),
-            nn.GeLU(),
+            nn.GELU(),
             nn.Dropout(0.2),
             nn.Linear(10528, 2632),
-            nn.GeLU(),
+            nn.GELU(),
             nn.Dropout(0.1),
             nn.Linear(2632, 37),
-            nn.GeLU(),
+            nn.GELU(),
         )
 
     def forward(self, x):
