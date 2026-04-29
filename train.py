@@ -907,11 +907,7 @@ class ArchimedesNetV22(nn.Module):
 
         self.lc = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(7360, 1024),
-            nn.ReLU(),
-            nn.Linear(1024, 512),
-            nn.ReLU(),
-            nn.Linear(512, 37),
+            nn.Linear(460, 37),
         )
 
     def forward(self, x):
