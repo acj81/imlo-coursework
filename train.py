@@ -1003,13 +1003,13 @@ class ArchimedesNetV25(nn.Module):
             # convolution to extract features
             nn.Conv2d(3, 6, 1),
             # dense-trans block combos:
-            ANDenseBlock(6, conv_layers=6, growth_rate=32),
+            ANDenseBlock(6, conv_layers=6, growth_rate=24),
             ANTransBlock(198, 99),
-            ANDenseBlock(99, conv_layers=12, growth_rate=32),
+            ANDenseBlock(99, conv_layers=12, growth_rate=24),
             ANTransBlock(483, 242),
-            ANDenseBlock(242, conv_layers=48, growth_rate=32),
+            ANDenseBlock(242, conv_layers=48, growth_rate=24),
             ANTransBlock(1778, 889),
-            ANDenseBlock(889, conv_layers=32, growth_rate=32),
+            ANDenseBlock(889, conv_layers=32, growth_rate=24),
             ANTransBlock(1913, 957),
             # final pooling layer to reduce down:
             nn.AvgPool2d(2),
