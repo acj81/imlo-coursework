@@ -695,6 +695,7 @@ class ArchimedesNetV19(nn.Module):
 
     def forward(self, x):
         # first dense layer
+        x = self.conv1(x)
         y = self.dense_1(x)
         # pool so we can concatenate
         x = self.pool8(x)
