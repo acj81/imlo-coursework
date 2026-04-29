@@ -603,12 +603,12 @@ class ArchimedesNetV18(nn.Module):
         self.conv1 = nn.Conv2d(3, 6, 1)
 
         self.dense_1 = nn.Sequential(
-            ANDenseBlock(6, growth_rate=8),
-            ANTransBlock(38, 19),
-            ANDenseBlock(19, growth_rate=8),
-            ANTransBlock(51, 26),
-            ANDenseBlock(26, growth_rate=8),
-            ANTransBlock(58, 29),
+            ANDenseBlock(3, growth_rate=8),
+            ANTransBlock(35, 18),
+            ANDenseBlock(18, growth_rate=8),
+            ANTransBlock(50, 25),
+            ANDenseBlock(25, growth_rate=8),
+            ANTransBlock(57, 29),
             ANDenseBlock(29, growth_rate=8),
         )
 
