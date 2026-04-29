@@ -653,6 +653,7 @@ class ArchimedesNetV19(nn.Module):
         super().__init__()
  
         # define our actual architecture here:
+        self.pool_8 = nn.MaxPool2d(8)
         self.pool_4 = nn.MaxPool2d(4)
         
         self.conv_1 = nn.Conv2d(3, 6, 1)
@@ -698,11 +699,11 @@ class ArchimedesNetV19(nn.Module):
         x = self.conv_1(x)
         y = self.dense_1(x)
         # pool so we can concatenate
-        x = self.pool8(x)
+        x = self.pool_8(x)
         x = torch.cat((y, x), 1)
         # 2nd dense, concatenate again
         y = self.dense_2(x)
-        x = self.pool8(x)
+        x = self.pool_8(x)
         x = torch.cat((y, x), 1)
         # 3rd dense, concatenate again:
         y = self.dense_3(x)
