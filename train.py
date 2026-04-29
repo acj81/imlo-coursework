@@ -679,18 +679,18 @@ class ArchimedesNetV19(nn.Module):
         )
 
         self.dense_3 = nn.Sequential(
-            ANDenseBlock(37, growth_rate=8),
-            ANTransBlock(69, 35),
-            ANDenseBlock(35, growth_rate=8),
-            ANTransBlock(67, 34),
-            ANDenseBlock(34, growth_rate=8),
-            ANTransBlock(66, 33),
-            ANDenseBlock(33, growth_rate=8),
+            ANDenseBlock(136, growth_rate=8),
+            ANTransBlock(168, 84),
+            ANDenseBlock(84, growth_rate=8),
+            ANTransBlock(116, 58),
+            ANDenseBlock(58, growth_rate=8),
+            ANTransBlock(90, 45, pool_size=1),
+            ANDenseBlock(77, growth_rate=8),
         )
 
         self.lc = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(201,37),
+            nn.Linear(245,37),
         )
 
     def forward(self, x):
