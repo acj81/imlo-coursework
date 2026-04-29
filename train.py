@@ -678,7 +678,7 @@ class ArchimedesNetV19(nn.Module):
             ANDenseBlock(37, growth_rate=8),
         )
 
-        self.dense_2 = nn.Sequential(
+        self.dense_3 = nn.Sequential(
             ANDenseBlock(37, growth_rate=8),
             ANTransBlock(69, 35),
             ANDenseBlock(35, growth_rate=8),
