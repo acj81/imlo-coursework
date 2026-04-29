@@ -653,9 +653,9 @@ class ArchimedesNetV19(nn.Module):
         super().__init__()
  
         # define our actual architecture here:
-        self.pool8 = nn.MaxPool2d(8)
+        self.pool_4 = nn.MaxPool2d(4)
         
-        self.conv1 = nn.Conv2d(3, 6, 1)
+        self.conv_1 = nn.Conv2d(3, 6, 1)
 
         self.dense_1 = nn.Sequential(
             ANDenseBlock(6, growth_rate=8),
@@ -695,7 +695,7 @@ class ArchimedesNetV19(nn.Module):
 
     def forward(self, x):
         # first dense layer
-        x = self.conv1(x)
+        x = self.conv_1(x)
         y = self.dense_1(x)
         # pool so we can concatenate
         x = self.pool8(x)
@@ -706,6 +706,7 @@ class ArchimedesNetV19(nn.Module):
         x = torch.cat((y, x), 1)
         # 3rd dense, concatenate again:
         y = self.dense_3(x)
+        x = self.pool_4(x)
         x = torch.cat((y, x), 1)
         # linear classifier:
         x = self.lc(x)
