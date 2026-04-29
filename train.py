@@ -617,10 +617,10 @@ class ArchimedesNetV18(nn.Module):
             ANDenseBlock(64, growth_rate=8),
             ANTransBlock(96, 48),
             ANDenseBlock(48, growth_rate=8),
-            ANTransBlock(48, 24),
-            ANDenseBlock(24, growth_rate=8),
-            ANTransBlock(56, 28),
-            ANDenseBlock(28, growth_rate=8),
+            ANTransBlock(80, 40),
+            ANDenseBlock(40, growth_rate=8),
+            ANTransBlock(72, 36),
+            ANDenseBlock(36, growth_rate=8),
         )
 
         self.lc = nn.Sequential(
