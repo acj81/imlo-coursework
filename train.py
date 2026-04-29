@@ -798,7 +798,7 @@ class ArchimedesNetV21(nn.Module):
         super().__init__()
         # define our actual architecture here:
 
-        self.pool_8= nn.MaxPool2d(8)
+        self.pool_8 = nn.MaxPool2d(8)
 
         self.final_pool = nn.AvgPool2d(4)
 
@@ -842,10 +842,86 @@ class ArchimedesNetV21(nn.Module):
     def forward(self, x):
         # dense layers:
         y = self.dense_1(x)
-        x = self.pool_16(x)
+        x = self.pool_8(x)
+        x = torch.cat((x, y), 1)
+        y = self.dense_2(x)
+        x = self.pool_8(x)
+        x = torch.cat((x, y), 1)
+        # linear classifier:
+        x = self.final_pool(x)
+        x = self.lc(x)
+        return x
+
+
+class ArchimedesNetV22(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # define our actual architecture here:
+
+        self.pool_8= nn.MaxPool2d(8)
+
+        self.final_pool = nn.AvgPool2d(4)
+
+        self.conv_1 = nn.Conv2d(3, 6, 1)
+
+        self.dense_1 = nn.Sequential(
+            # dense-trans block combos:
+            ANDenseBlock(6, conv_layers=6, growth_rate=24),
+            ANTransBlock(150, 19, 2),
+            ANDenseBlock(19, conv_layers=12, growth_rate=24),
+            ANTransBlock(307, 39, 2),
+            ANDenseBlock(39, conv_layers=18, growth_rate=24),
+            ANTransBlock(471, 59, 1),
+            ANDenseBlock(59, conv_layers=30, growth_rate=24),
+            ANTransBlock(779, 98, 1),
+            ANDenseBlock(98, conv_layers=6, growth_rate=24),
+            ANTransBlock(242, 31, 1),
+        )
+
+        self.dense_2 = nn.Sequential(
+            # dense-trans block combos:
+            ANDenseBlock(37, conv_layers=6, growth_rate=24),
+            ANTransBlock(181, 46, 2),
+            ANDenseBlock(46, conv_layers=12, growth_rate=24),
+            ANTransBlock(334, 84, 2),
+            ANDenseBlock(84, conv_layers=18, growth_rate=24),
+            ANTransBlock(516, 129, 1),
+            ANDenseBlock(129, conv_layers=30, growth_rate=24),
+            ANTransBlock(849, 213, 1),
+            ANDenseBlock(213, conv_layers=6, growth_rate=24),
+            ANTransBlock(357, 90, 1),
+        )
+
+        self.dense_3 = nn.Sequential(
+            # dense-trans block combos:
+            ANDenseBlock(127, conv_layers=6, growth_rate=24),
+            ANTransBlock(271, 136, 2),
+            ANDenseBlock(136, conv_layers=12, growth_rate=24),
+            ANTransBlock(424, 212, 2),
+            ANDenseBlock(212, conv_layers=18, growth_rate=24),
+            ANTransBlock(644, 322, 1),
+            ANDenseBlock(322, conv_layers=30, growth_rate=24),
+            ANTransBlock(1042, 521, 1),
+            ANDenseBlock(521, conv_layers=6, growth_rate=24),
+            ANTransBlock(665, 333, 1),
+        )
+
+        self.lc = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(7360, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Linear(512, 37),
+        )
+
+    def forward(self, x):
+        # dense layers:
+        y = self.dense_1(x)
+        x = self.pool_8(x)
         x = torch.cat((x, y), 1)
         y = self.dense_16(x)
-        x = self.pool_16(x)
+        x = self.pool_8(x)
         x = torch.cat((x, y), 1)
         # linear classifier:
         x = self.final_pool(x)
