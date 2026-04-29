@@ -798,7 +798,7 @@ class ArchimedesNetV21(nn.Module):
         super().__init__()
         # define our actual architecture here:
 
-        self.pool_16 = nn.MaxPool2d(16)
+        self.pool_8= nn.MaxPool2d(8)
 
         self.final_pool = nn.AvgPool2d(4)
 
@@ -811,27 +811,29 @@ class ArchimedesNetV21(nn.Module):
             ANDenseBlock(63, conv_layers=18, growth_rate=24),
             ANTransBlock(495, 99, 2),
             ANDenseBlock(99, conv_layers=30, growth_rate=24),
-            ANTransBlock(819, 409, 2),
+            ANTransBlock(819, 409, 1),
             ANDenseBlock(409, conv_layers=6, growth_rate=24),
             ANTransBlock(553, 276, 1),
         )
 
         self.dense_2 = nn.Sequential(
             # dense-trans block combos:
-            ANDenseBlock(276, conv_layers=6, growth_rate=24),
-            ANTransBlock(420, 84, 2),
-            ANDenseBlock(84, conv_layers=12, growth_rate=24),
-            ANTransBlock(372, 75, 2),
-            ANDenseBlock(75, conv_layers=18, growth_rate=24),
-            ANTransBlock(507, 101, 2),
-            ANDenseBlock(101, conv_layers=30, growth_rate=24),
-            ANTransBlock(821, 165, 2),
-            ANDenseBlock(165, conv_layers=6, growth_rate=24),
-            ANTransBlock(309, 62, 1),
+            ANDenseBlock(279, conv_layers=6, growth_rate=24),
+            ANTransBlock(423, 141, 2),
+            ANDenseBlock(141, conv_layers=12, growth_rate=24),
+            ANTransBlock(429, 143, 2),
+            ANDenseBlock(143, conv_layers=18, growth_rate=24),
+            ANTransBlock(575, 192, 2),
+            ANDenseBlock(192, conv_layers=30, growth_rate=24),
+            ANTransBlock(912, 304, 1),
+            ANDenseBlock(304, conv_layers=6, growth_rate=24),
+            ANTransBlock(448, 150, 1),
         )
 
         self.lc = nn.Sequential(
             nn.Flatten(),
+            nn.Linear(7168, 1024),
+            nn.ReLU(),
             nn.Linear(1024, 512),
             nn.ReLU(),
             nn.Linear(512, 37),
@@ -855,7 +857,7 @@ class ArchimedesNetV21(nn.Module):
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNetV20().to(device)
+model = ArchimedesNetV21().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
