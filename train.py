@@ -754,8 +754,8 @@ class ArchimedesNetV20(nn.Module):
             ANTransBlock(69, 35, pool_size=2),
         )
         self.dense_4 = nn.Sequential(
-            ANDenseBlock(100, growth_rate=8),
-            ANTransBlock(132, 66, pool_size=1),
+            ANDenseBlock(101, growth_rate=8),
+            ANTransBlock(133, 66, pool_size=1),
             ANDenseBlock(66, growth_rate=8),
             ANTransBlock(98, 49, pool_size=1),
             ANDenseBlock(49, growth_rate=8),
