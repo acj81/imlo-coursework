@@ -848,7 +848,6 @@ class ArchimedesNetV21(nn.Module):
         x = self.pool_8(x)
         x = torch.cat((x, y), 1)
         # linear classifier:
-        x = self.final_pool(x)
         x = self.lc(x)
         return x
 
