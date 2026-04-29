@@ -625,7 +625,7 @@ class ArchimedesNetV18(nn.Module):
 
         self.lc = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(1088,512),
+            nn.Linear(528,512),
             nn.ReLU(),
             nn.Dropout(0.1),
             nn.Linear(512, 37),
