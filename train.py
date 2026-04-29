@@ -714,6 +714,85 @@ class ArchimedesNetV19(nn.Module):
         return x
 
 
+class ArchimedesNetV19(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # define our actual architecture here:
+
+        self.pool_2 = nn.MaxPool2d(2)
+
+        self.final_pool = nn.AvgPool2d(4)
+
+        self.dense_1 = nn.Sequential(
+            ANDenseBlock(3, growth_rate=8),
+            ANTransBlock(35, 18, pool_size=1),
+            ANDenseBlock(18, growth_rate=8),
+            ANTransBlock(50, 25, pool_size=1),
+            ANDenseBlock(25, growth_rate=8),
+            ANTransBlock(57, 29, pool_size=1),
+            ANDenseBlock(29, growth_rate=8),
+            ANTransBlock(61, 31 pool_size=2),
+        )
+        self.dense_2 = nn.Sequential(
+            ANDenseBlock(34, growth_rate=8),
+            ANTransBlock(37, 19, pool_size=1),
+            ANDenseBlock(19, growth_rate=8),
+            ANTransBlock(51, 26, pool_size=1),
+            ANDenseBlock(26, growth_rate=8),
+            ANTransBlock(58, 29, pool_size=1),
+            ANDenseBlock(29, growth_rate=8),
+            ANTransBlock(61, 31 pool_size=2),
+        )
+        self.dense_3 = nn.Sequential(
+            ANDenseBlock(65, growth_rate=8),
+            ANTransBlock(97, 49, pool_size=1),
+            ANDenseBlock(49, growth_rate=8),
+            ANTransBlock(81, 41, pool_size=1),
+            ANDenseBlock(41, growth_rate=8),
+            ANTransBlock(73, 37, pool_size=1),
+            ANDenseBlock(37, growth_rate=8),
+            ANTransBlock(69, 35 pool_size=2),
+        )
+        self.dense_4 = nn.Sequential(
+            ANDenseBlock(100, growth_rate=8),
+            ANTransBlock(132, 66, pool_size=1),
+            ANDenseBlock(66, growth_rate=8),
+            ANTransBlock(98, 49, pool_size=1),
+            ANDenseBlock(49, growth_rate=8),
+            ANTransBlock(81, 41, pool_size=1),
+            ANDenseBlock(41, growth_rate=8),
+            ANTransBlock(73, 37, pool_size=2),
+        )
+
+        self.lc = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(2192, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Linear(512, 37),
+        )
+
+    def forward(self, x):
+        # dense layers:
+        y = self.dense_1(x)
+        x = self.pool_2(x)
+        x = torch.cat((x, y), 1)
+        y = self.dense_2(x)
+        x = self.pool_2(x)
+        x = torch.cat((x, y), 1)
+        y = self.dense_3(x)
+        x = self.pool_2(x)
+        x = torch.cat((x, y), 1)
+        y = self.dense_4(x)
+        x = self.pool_2(x)
+        x = torch.cat((x, y), 1)
+        # linear classifier:
+        x = self.final_pool(x)
+        x = self.lc(x)
+        return x
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
