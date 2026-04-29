@@ -932,7 +932,7 @@ class ArchimedesNetV22(nn.Module):
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
-model = ArchimedesNetV21().to(device)
+model = ArchimedesNetV22().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
