@@ -368,7 +368,7 @@ class ARDNet(nn.Module):
             # Stage 2
             ARDStageLayer(291, 64, [291, 32, 32]),
             ARDStageLayer(483, 64, [483, 32, 32]),
-            ARDStageLayer(675, 64, []675, 32, 32], has_trans_layer=False),
+            ARDStageLayer(675, 64, [675, 32, 32], has_trans_layer=False),
             ARDTransLayer(867, img_dim=[867, 32, 32], s=2),
             # Stage 3
             ARDStageLayer(433, 64, [433, 16, 16]),
