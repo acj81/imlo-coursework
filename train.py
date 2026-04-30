@@ -394,6 +394,9 @@ class ARDNet(nn.Module):
             nn.Linear(1656, 37),
         )
 
+    def forward(self, x):
+        x = self.layers(x)
+        return x
 
 
 # handle accelerators i.e. GPU - if one available, should use that:
