@@ -389,7 +389,7 @@ class ARDNet(nn.Module):
             ARDStageLayer(191, 64, [191, 8, 8]),
             ARDStageLayer(191, 64, [191, 8, 8], has_trans_layer=False),
             nn.AdaptiveAvgPool2d(output_size=(1,1)),
-            nn.LayerNorm((337, 1, 1)),
+            nn.LayerNorm((383, 1, 1)),
             nn.Flatten(),
             nn.Linear(337, 37),
         )
