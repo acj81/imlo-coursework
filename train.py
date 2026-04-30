@@ -293,7 +293,7 @@ class ARDTransLayer(nn.Module):
 
         self.layers = nn.Sequential(
             nn.LayerNorm(img_dim),
-            nn.Conv2d(in_channels, in_channels // 2, filter_size=s, stride=s),
+            nn.Conv2d(in_channels, in_channels // 2, kernel_size=s, stride=s),
         )
 
 
@@ -307,12 +307,12 @@ class ARDFeatureMixer(nn.Module):
 
         self.layers = nn.Sequential(
             # need depthwise convolution, so use groups=in_channels to get that in PyTorch
-            nn.Conv2d(in_channels, in_channels, filter_size=filter_size, groups=in_channels, padding="same"),
+            nn.Conv2d(in_channels, in_channels, kernel_size=filter_size, groups=in_channels, padding="same"),
             nn.LayerNorm(img_dim),
             # use filter_size=channel-dim to mimic a linear layer on 2d images
-            nn.Conv2D(in_channels, 4 * in_channels, filter_size=1),
+            nn.Conv2D(in_channels, 4 * in_channels, kerneL_size=1),
             nn.GELU(),
-            nn.Conv2D(4 * in_channels, growth_rate, filter_size=1),
+            nn.Conv2D(4 * in_channels, growth_rate, kernel_size=1),
         )
 
     def forward(self, x):
