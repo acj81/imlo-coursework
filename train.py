@@ -391,7 +391,7 @@ class ARDNet(nn.Module):
             nn.AdaptiveAvgPool2d(output_size=(1,1)),
             nn.LayerNorm((383, 1, 1)),
             nn.Flatten(),
-            nn.Linear(337, 37),
+            nn.Linear(383, 37),
         )
 
     def forward(self, x):
