@@ -1171,7 +1171,7 @@ epochs = 30
 
 loss_fn = nn.CrossEntropyLoss()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
+optimizer = torch.optim.SGD(model.parameters(), lr=learn_rate)
 
 
 # specify test, train datasets:
