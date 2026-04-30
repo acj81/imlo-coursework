@@ -1084,6 +1084,7 @@ class ArchimedesNetV26(nn.Module):
         return x
 
 
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
@@ -1163,7 +1164,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 0.0001
+learn_rate = 0.001
 
 batch_size = 16
 
@@ -1171,7 +1172,7 @@ epochs = 30
 
 loss_fn = nn.CrossEntropyLoss()
 
-optimizer = torch.optim.SGD(model.parameters(), lr=learn_rate)
+optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
 
 
 # specify test, train datasets:
