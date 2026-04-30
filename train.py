@@ -1036,7 +1036,6 @@ class ADNFeatureMixer(nn.Module):
         self.layers = nn.Sequential(
             nn.Conv2d(in_channels, in_channels + growth_rate, filter_size, groups=in_channels),
             nn.LayerNorm(),
-            nn.
         )
 
 
