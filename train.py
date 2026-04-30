@@ -326,13 +326,13 @@ class ARDStageLayer(nn.Module):
 
         # set feature mixers, updating img_dim as we go:
         self.fm_1 = ARDFeatureMixer(in_channels, img_dim, growth_rate)
-        img_dim[0] += growth-rate
+        img_dim[0] += growth_rate
         
         self.fm_2 = ARDFeatureMixer(in_channels + growth_rate, img_dim, growth_rate)
-        img_dim[0] += growth-rate
+        img_dim[0] += growth_rate
         
         self.fm_3 = ARDFeatureMixer(in_channels + 2 * growth_rate, img_dim, growth_rate)
-        img_dim[0] += growth-rate
+        img_dim[0] += growth_rate
 
         # handle transition layer
         if has_trans_layer:
