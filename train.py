@@ -326,7 +326,7 @@ class ARDFeatureMixer(nn.Module):
 
         self.layers = nn.Sequential(
             # need depthwise convolution, so use groups=in_channels to get that in PyTorch
-            nn.Conv2d(in_channels, in_channels, filter_size=filter_size, groups=in_channels, padding="same")
+            nn.Conv2d(in_channels, in_channels, filter_size=filter_size, groups=in_channels, padding="same"),
             nn.LayerNorm(channel_dim),
             # use filter_size=channel-dim to mimic a linear layer on 2d images
             nn.Conv2D(in_channels, 4 * in_channels, filter_size=1),
