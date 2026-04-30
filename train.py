@@ -310,7 +310,7 @@ class ARDFeatureMixer(nn.Module):
             nn.Conv2d(in_channels, in_channels, kernel_size=filter_size, groups=in_channels, padding="same"),
             nn.LayerNorm(img_dim),
             # use filter_size=channel-dim to mimic a linear layer on 2d images
-            nn.Conv2d(in_channels, 4 * in_channels, kerneL_size=1),
+            nn.Conv2d(in_channels, 4 * in_channels, kernel_size=1),
             nn.GELU(),
             nn.Conv2d(4 * in_channels, growth_rate, kernel_size=1),
         )
