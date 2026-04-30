@@ -288,11 +288,11 @@ class ArchimedesNetV24(nn.Module):
 
 
 class ARDTransLayer(nn.Module):
-    def __init__(self, in_channels, channel_dim, s):
+    def __init__(self, in_channels, img_dim, s=1):
         super().__init__()
 
         self.layers = nn.Sequential(
-            nn.LayerNorm(channel_dim),
+            nn.LayerNorm(img_dim),
             nn.Conv2d(in_channels, in_channels // 2, filter_size=s, stride=s),
         )
 
@@ -302,13 +302,13 @@ class ARDTransLayer(nn.Module):
         return x
 
 class ARDFeatureMixer(nn.Module):
-    def __init__(self, in_channels, channel_dim, growth_rate, filter_size=7):
+    def __init__(self, in_channels, img_dim, growth_rate, filter_size=7):
         super().__init__()
 
         self.layers = nn.Sequential(
             # need depthwise convolution, so use groups=in_channels to get that in PyTorch
             nn.Conv2d(in_channels, in_channels, filter_size=filter_size, groups=in_channels, padding="same"),
-            nn.LayerNorm(channel_dim),
+            nn.LayerNorm(img_dim),
             # use filter_size=channel-dim to mimic a linear layer on 2d images
             nn.Conv2D(in_channels, 4 * in_channels, filter_size=1),
             nn.GELU(),
@@ -320,23 +320,79 @@ class ARDFeatureMixer(nn.Module):
         return x
 
 
-class ARDFeatureMixer(nn.Module):
-    def __init__(self, in_channels, channel_dim, growth_rate, filter_size=7):
+class ARDStageLayer(nn.Module):
+    def __init__(self, in_channels, growth_rate, img_dim, has_trans_layer=True):
+        super().__init__()
+
+        # set feature mixers, updating img_dim as we go:
+        self.fm_1 = ARDFeatureMixer(in_channels, img_dim, growth_rate)
+        img_dim[0] += growth-rate
+        
+        self.fm_2 = ARDFeatureMixer(in_channels + growth_rate, img_dim, growth_rate)
+        img_dim[0] += growth-rate
+        
+        self.fm_3 = ARDFeatureMixer(in_channels + 2 * growth_rate, img_dim, growth_rate)
+        img_dim[0] += growth-rate
+
+        # handle transition layer
+        if has_trans_layer:
+            self.trans_layer = ARDTransLayer(in_channels + 3 * growth_rate, img_dim, s=1)
+
+        else:
+            # if shouldn't have trans layer, set trans layer to return input w/o modification
+            self.trans_layer = nn.Identity()       
+
+    def forward(self, x):
+        # y is current output, x is current input:
+        y = self.fm_1(x)
+        x = torch.cat((x, y), 1)
+        y = self.fm_2(x)
+        x = torch.cat((x, y), 1)
+        y = self.fm_3(x)
+        x = torch.cat((x, y), 1)
+        x = self.trans_layer(x)
+        return x
+
+
+class ARDNet(nn.Module):
+    def __init__(self):
         super().__init__()
 
         self.layers = nn.Sequential(
-            # need depthwise convolution, so use groups=in_channels to get that in PyTorch
-            nn.Conv2d(in_channels, in_channels, filter_size=filter_size, groups=in_channels, padding="same"),
-            nn.LayerNorm(channel_dim),
-            # use filter_size=channel-dim to mimic a linear layer on 2d images
-            nn.Conv2D(in_channels, 4 * in_channels, filter_size=1),
-            nn.GELU(),
-            nn.Conv2D(4 * in_channels, growth_rate, filter_size=1),
+            nn.Conv2d(3, 6, kernel_size=4, stride=4),
+            # Stage 1
+            ARDStageLayer(6, 64, (6, 64, 64)),
+            ARDStageLayer(198, 64, (198, 64, 64)),
+            ARDStageLayer(390, 64, (390, 64, 64), has_trans_layer=False),
+            ARDTransLayer(582, img_dim=(582, 64, 64), s=2),
+            # Stage 2
+            ARDStageLayer(291, 64, (291, 32, 32)),
+            ARDStageLayer(483, 64, (483, 32, 32)),
+            ARDStageLayer(675, 64, (675, 32, 32), has_trans_layer=False),
+            ARDTransLayer(867, img_dim=(867, 32, 32), s=2),
+            # Stage 3
+            ARDStageLayer(433, 64, (433, 16, 16)),
+            ARDStageLayer(625, 64, (625, 16, 16)),
+            ARDStageLayer(817, 64, (817, 16, 16)),
+            ARDStageLayer(1009, 64, (1009, 16, 16)),
+            ARDStageLayer(1201, 64, (1201, 16, 16)),
+            ARDStageLayer(1393, 64, (1393, 16, 16)),
+            ARDStageLayer(1585, 64, (1585, 16, 16)),
+            ARDStageLayer(1777, 64, (1777, 16, 16)),
+            ARDStageLayer(1969, 64, (1969, 16, 16)),
+            ARDStageLayer(2161, 64, (2161, 16, 16)),
+            ARDStageLayer(2353, 64, (2353, 16, 16)),
+            ARDStageLayer(2545, 64, (2545, 16, 16), has_trans_layer=False),
+            ARDTransLayer(2545, img_dim=(2545, 16, 16), s=2),
+            # Stage 4
+            ARDStageLayer(1272, 64, (1272, 8, 8)),
+            ARDStageLayer(1464, 64, (1464, 8, 8)),
+            ARDStageLayer(1656, 64, (1656, 8, 8), has_trans_layer=False),
+            nn.AdaptiveAvgPool2d(output_size=(1,1)),
+            nn.LayerNorm(),
+            nn.Linear(1656, 37)
         )
 
-    def forward(self, x):
-        x = self.layers(x)
-        return x
 
 
 # handle accelerators i.e. GPU - if one available, should use that:
@@ -344,7 +400,7 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 print(f"Using accelerator: {device}")
 
 
-model = ArchimedesNetV12().to(device)
+model = ARDNet().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
