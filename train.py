@@ -9,7 +9,7 @@ import datetime
 # --- DEFINE MODEL ---
 
 class ANDenseBlock(nn.Module):
-    def __init__(self, in_channels, feature_dimensions, conv_layers=4, growth_rate=4, filter_size=3):
+    def __init__(self, in_channels, conv_layers=4, growth_rate=4, filter_size=3):
         super().__init__()
 
         # create our convolutional layers based on params given:
