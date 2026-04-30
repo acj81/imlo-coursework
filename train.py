@@ -307,6 +307,25 @@ class ARDFeatureMixer(nn.Module):
 
         self.layers = nn.Sequential(
             # need depthwise convolution, so use groups=in_channels to get that in PyTorch
+            nn.Conv2d(in_channels, in_channels, filter_size=filter_size, groups=in_channels, padding="same"),
+            nn.LayerNorm(channel_dim),
+            # use filter_size=channel-dim to mimic a linear layer on 2d images
+            nn.Conv2D(in_channels, 4 * in_channels, filter_size=1),
+            nn.GELU(),
+            nn.Conv2D(4 * in_channels, growth_rate, filter_size=1),
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
+class ARDFeatureMixer(nn.Module):
+    def __init__(self, in_channels, channel_dim, growth_rate, filter_size=7):
+        super().__init__()
+
+        self.layers = nn.Sequential(
+            # need depthwise convolution, so use groups=in_channels to get that in PyTorch
             nn.Conv2d(in_channels, in_channels, filter_size=filter_size, groups=in_channels, padding="same")
             nn.LayerNorm(channel_dim),
             # use filter_size=channel-dim to mimic a linear layer on 2d images
@@ -320,18 +339,12 @@ class ARDFeatureMixer(nn.Module):
         return x
 
 
-
-
-
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
 
-import timm
-
-model = timm.create_model("rdnet_large", pretrained=False).to(device)
-#model = ArchimedesNetV12().to(device)
+model = ArchimedesNetV12().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
@@ -406,7 +419,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 1e-4
+learn_rate = 1e-5
 
 batch_size = 16
 
