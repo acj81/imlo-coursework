@@ -362,9 +362,9 @@ class ARDNet(nn.Module):
             nn.Conv2d(3, 6, kernel_size=4, stride=4),
             # Stage 1
             ARDStageLayer(6, 64, [6, 64, 64]),
-            ARDStageLayer(98, 64, [98, 64, 64]),
-            ARDStageLayer(145, 64, [145, 64, 64], has_trans_layer=False),
-            ARDTransLayer(337, img_dim=[337, 64, 64], s=2),
+            ARDStageLayer(99, 64, [99, 64, 64]),
+            ARDStageLayer(146, 64, [146, 64, 64], has_trans_layer=False),
+            ARDTransLayer(338, img_dim=[338, 64, 64], s=2),
             # Stage 2
             ARDStageLayer(169, 64, [169, 32, 32]),
             ARDStageLayer(181, 64, [181, 32, 32]),
