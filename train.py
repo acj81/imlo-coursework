@@ -417,7 +417,7 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 print(f"Using accelerator: {device}")
 
 
-model = ArchimedesNetV12().to(device)
+model = ARDNet().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
