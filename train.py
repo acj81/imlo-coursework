@@ -88,22 +88,22 @@ class ArchimedesNetV12(nn.Module):
         # define our actual architecture:
         self.layers = nn.Sequential(
             # convolution to extract features
-            nn.Conv2d(3, 6, 1),
+            nn.Conv2d(3, 6, 4, stride=4),
             # dense-trans block combos:
             ANDenseBlock(6, conv_layers=6, growth_rate=24),
             ANTransBlock(150, 75, 2),
             ANDenseBlock(75, conv_layers=12, growth_rate=24),
-            ANTransBlock(363, 182, 4),
+            ANTransBlock(363, 182, 2),
             ANDenseBlock(182, conv_layers=18, growth_rate=24),
-            ANTransBlock(614, 307, 4),
+            ANTransBlock(614, 307, 2),
             ANDenseBlock(307, conv_layers=30, growth_rate=24),
-            ANTransBlock(1027, 514, 4),
+            ANTransBlock(1027, 514, 2),
             ANDenseBlock(514, conv_layers=6, growth_rate=24),
             # final pooling layer to reduce down, batch norm:
             nn.BatchNorm2d(658),
             # finally, linear classification:
             nn.Flatten(),
-            nn.Linear(2632, 512),
+            nn.Linear(10528, 512),
             nn.GELU(),
             nn.Dropout(0.1),
             nn.Linear(512, 37)
