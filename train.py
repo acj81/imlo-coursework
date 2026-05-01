@@ -293,7 +293,7 @@ class ARDTransLayer(nn.Module):
 
         self.layers = nn.Sequential(
             nn.LayerNorm(img_dim),
-            nn.Conv2d(in_channels, in_channels // 2, kernel_size=s, stride=s),
+            nn.Conv2d(in_channels, out_channels=int(in_channels / 2), kernel_size=s, stride=s),
         )
 
 
@@ -362,36 +362,36 @@ class ARDNet(nn.Module):
             nn.Conv2d(3, 6, kernel_size=4, stride=4),
             # Stage 1
             ARDStageLayer(6, 64, [6, 64, 64]),
-            ARDStageLayer(99, 64, [99, 64, 64]),
+            ARDStageLayer(98, 64, [98, 64, 64]),
             ARDStageLayer(145, 64, [145, 64, 64], has_trans_layer=False),
             ARDTransLayer(337, img_dim=[337, 64, 64], s=2),
             # Stage 2
-            ARDStageLayer(168, 64, [168, 32, 32]),
-            ARDStageLayer(180, 64, [180, 32, 32]),
-            ARDStageLayer(186, 64, [186, 32, 32], has_trans_layer=False),
-            ARDTransLayer(378, img_dim=[378, 32, 32], s=2),
+            ARDStageLayer(169, 64, [169, 32, 32]),
+            ARDStageLayer(181, 64, [181, 32, 32]),
+            ARDStageLayer(187, 64, [187, 32, 32], has_trans_layer=False),
+            ARDTransLayer(379, img_dim=[379, 32, 32], s=2),
             # Stage 3
-            ARDStageLayer(189, 64, [189, 16, 16]),
             ARDStageLayer(190, 64, [190, 16, 16]),
-            ARDStageLayer(191, 64, [191, 16, 16]),
-            ARDStageLayer(191, 64, [191, 16, 16]),
-            ARDStageLayer(191, 64, [191, 16, 16]),
-            ARDStageLayer(191, 64, [191, 16, 16]),
-            ARDStageLayer(191, 64, [191, 16, 16]),
-            ARDStageLayer(191, 64, [191, 16, 16]),
-            ARDStageLayer(191, 64, [191, 16, 16]),
-            ARDStageLayer(191, 64, [191, 16, 16]),
-            ARDStageLayer(191, 64, [191, 16, 16]),
-            ARDStageLayer(191, 64, [191, 16, 16], has_trans_layer=False),
-            ARDTransLayer(383, img_dim=[383, 16, 16], s=2),
+            ARDStageLayer(192, 64, [192, 16, 16]),
+            ARDStageLayer(192, 64, [192, 16, 16]),
+            ARDStageLayer(192, 64, [192, 16, 16]),
+            ARDStageLayer(192, 64, [192, 16, 16]),
+            ARDStageLayer(192, 64, [192, 16, 16]),
+            ARDStageLayer(192, 64, [192, 16, 16]),
+            ARDStageLayer(192, 64, [192, 16, 16]),
+            ARDStageLayer(192, 64, [192, 16, 16]),
+            ARDStageLayer(192, 64, [192, 16, 16]),
+            ARDStageLayer(192, 64, [192, 16, 16]),
+            ARDStageLayer(192, 64, [192, 16, 16], has_trans_layer=False),
+            ARDTransLayer(384, img_dim=[384, 16, 16], s=2),
             # Stage 4
-            ARDStageLayer(191, 64, [191, 8, 8]),
-            ARDStageLayer(191, 64, [191, 8, 8]),
-            ARDStageLayer(191, 64, [191, 8, 8], has_trans_layer=False),
+            ARDStageLayer(192, 64, [192, 8, 8]),
+            ARDStageLayer(192, 64, [192, 8, 8]),
+            ARDStageLayer(192, 64, [192, 8, 8], has_trans_layer=False),
             nn.AdaptiveAvgPool2d(output_size=(1,1)),
-            nn.LayerNorm((383, 1, 1)),
+            nn.LayerNorm((384, 1, 1)),
             nn.Flatten(),
-            nn.Linear(383, 37),
+            nn.Linear(384, 37),
         )
 
     def forward(self, x):
@@ -479,7 +479,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 5e-4
+learn_rate = 1e-4
 
 batch_size = 16
 
