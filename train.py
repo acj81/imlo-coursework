@@ -88,7 +88,7 @@ class ArchimedesNetV12(nn.Module):
         # define our actual architecture:
         self.layers = nn.Sequential(
             # convolution to extract features
-            nn.Conv2d(3, 6, 4, stride=4),
+            nn.Conv2d(3, 6, 2, stride=2),
             # dense-trans block combos:
             ANDenseBlock(6, conv_layers=6, growth_rate=24),
             ANTransBlock(150, 75, 2),
@@ -103,7 +103,7 @@ class ArchimedesNetV12(nn.Module):
             nn.BatchNorm2d(658),
             # finally, linear classification:
             nn.Flatten(),
-            nn.Linear(10528, 512),
+            nn.Linear(21056, 512),
             nn.GELU(),
             nn.Dropout(0.1),
             nn.Linear(512, 37)
