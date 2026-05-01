@@ -362,7 +362,7 @@ class ARDNet(nn.Module):
             nn.Conv2d(3, 6, kernel_size=4, stride=4),
             # Stage 1
             ARDStageLayer(6, [6, 64, 64], growth_rate=128),
-            ARDStageLayer(195, [195, 64, 64] growth_rate=128),
+            ARDStageLayer(195, [195, 64, 64], growth_rate=128),
             ARDStageLayer(289, [289, 64, 64], growth_rate=128, has_trans_layer=False),
             ARDTransLayer(673, [289, 64, 64], s=2),
             # Stage 2
@@ -399,8 +399,8 @@ class ARDNet(nn.Module):
             ARDTransLayer(1535, [1535, 16, 16], s=2),
             # Stage 4
             ARDStageLayer(767, [767, 8, 8], growth_rate=360),
-            ARDStageLayer(923, [923, 8, 8] growth_rate=360),
-            ARDStageLayer(1001, [1001, 8, 8] growth_rate=360, has_trans_layer=False),
+            ARDStageLayer(923, [923, 8, 8], growth_rate=360),
+            ARDStageLayer(1001, [1001, 8, 8], growth_rate=360, has_trans_layer=False),
             nn.AdaptiveAvgPool2d(output_size=(1,1)),
             nn.LayerNorm((1001, 1, 1)),
             nn.Flatten(),
