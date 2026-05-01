@@ -9,7 +9,7 @@ import datetime
 # --- DEFINE MODEL ---
 
 class ANDenseBlock(nn.Module):
-    def __init__(self, in_channels, conv_layers=4, growth_rate=4, filter_size=7):
+    def __init__(self, in_channels, conv_layers=4, growth_rate=4, filter_size=3):
         super().__init__()
 
         # create our convolutional layers based on params given:
@@ -92,11 +92,11 @@ class ArchimedesNetV12(nn.Module):
             # dense-trans block combos:
             ANDenseBlock(6, conv_layers=6, growth_rate=24),
             ANTransBlock(150, 75, 2),
-            ANDenseBlock(75, conv_layers=12, growth_rate=24),
+            ANDenseBlock(75, conv_layers=12, growth_rate=24, filter_size=5),
             ANTransBlock(363, 182, 4),
             ANDenseBlock(182, conv_layers=18, growth_rate=24),
             ANTransBlock(614, 307, 4),
-            ANDenseBlock(307, conv_layers=30, growth_rate=24),
+            ANDenseBlock(307, conv_layers=30, growth_rate=24, filter_size=5),
             ANTransBlock(1027, 514, 4),
             ANDenseBlock(514, conv_layers=6, growth_rate=24),
             # final pooling layer to reduce down, batch norm:
@@ -498,9 +498,10 @@ model = VisionTransformer(
     num_layers = 5, 
     num_classes = 37, 
     dropout = 0.0,
-)
-
+).to(device)
 '''
+
+
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
 
