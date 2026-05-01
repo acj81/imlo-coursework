@@ -92,11 +92,11 @@ class ArchimedesNetV12(nn.Module):
             # dense-trans block combos:
             ANDenseBlock(6, conv_layers=6, growth_rate=24),
             ANTransBlock(150, 75, 2),
-            ANDenseBlock(75, conv_layers=12, growth_rate=24, filter_size=5),
+            ANDenseBlock(75, conv_layers=12, growth_rate=24),
             ANTransBlock(363, 182, 4),
             ANDenseBlock(182, conv_layers=18, growth_rate=24),
             ANTransBlock(614, 307, 4),
-            ANDenseBlock(307, conv_layers=30, growth_rate=24, filter_size=5),
+            ANDenseBlock(307, conv_layers=30, growth_rate=24),
             ANTransBlock(1027, 514, 4),
             ANDenseBlock(514, conv_layers=6, growth_rate=24),
             # final pooling layer to reduce down, batch norm:
