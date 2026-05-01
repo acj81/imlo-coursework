@@ -9,7 +9,7 @@ import datetime
 # --- DEFINE MODEL ---
 
 class ANDenseBlock(nn.Module):
-    def __init__(self, in_channels, conv_layers=4, growth_rate=4, filter_size=5):
+    def __init__(self, in_channels, conv_layers=4, growth_rate=4, filter_size=7):
         super().__init__()
 
         # create our convolutional layers based on params given:
@@ -411,6 +411,73 @@ class ARDNet(nn.Module):
         x = self.layers(x)
         return x
 
+class VisionTransformer(nn.Module):
+    def __init__(self, image_size, patch_size, num_channels, embed_dim, num_heads, num_layers, num_classes, dropout=0.0):
+        ''' 
+            image_size: height & width of image as single int (assumes height == width, i.e. a square image)
+            patch_size: height & width of path as single int (patches are square i.e. height == width)
+            num_channels: number of input channels in image (1 for greyscale, 3 for RGB)
+            embed_dim: size of the embedding as single int
+            num_heads: number of classification heads the transformer should have
+            num_layers: number of layers the transformer should have
+            num_classes: number of output classes the images have
+            
+        '''
+        super().__init__()
+        self.patch_size = patch_size
+        self.num_patches = (image_size // patch_size) ** 2
+        
+        # Patch Embedding Layer
+        self.patch_embed = nn.Linear(num_channels * patch_size ** 2, embed_dim)
+        
+        # Learnable Positional Embedding and CLS Token
+        self.cls_token = nn.Parameter(torch.randn(1, 1, embed_dim))
+        self.pos_embed = nn.Parameter(torch.randn(1, 1 + self.num_patches, embed_dim))
+        
+        # Transformer Encoder
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=embed_dim, 
+            nhead=num_heads, 
+            dropout=dropout, 
+            batch_first=True
+        )
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        
+        # Classification Head
+        self.norm = nn.LayerNorm(embed_dim)
+        self.head = nn.Linear(embed_dim, num_classes)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x):
+        B, C, H, W = x.shape
+        assert H == W == self.patch_size * int(self.num_patches**0.5), "Image size must be divisible by patch size"
+        
+        # Split image into patches and flatten
+        # x shape: [B, C, H, W] -> [B, num_patches, patch_size*patch_size*C]
+        x = x.unfold(2, self.patch_size, self.patch_size).unfold(3, self.patch_size, self.patch_size)
+        x = x.reshape(B, C, -1, self.patch_size**2)
+        x = x.permute(0, 2, 1, 3).reshape(B, -1, C * self.patch_size**2)
+        
+        # Project to embedding dimension
+        x = self.patch_embed(x)
+        
+        # Prepend CLS token
+        cls_tokens = self.cls_token.expand(B, -1, -1)
+        x = torch.cat((cls_tokens, x), dim=1)
+        
+        # Add positional embeddings
+        x = x + self.pos_embed
+        x = self.dropout(x)
+        
+        # Apply Transformer
+        x = self.transformer(x)
+        
+        # Use CLS token for classification
+        x = x[:, 0]
+        x = self.norm(x)
+        x = self.head(x)
+        return x   
+
 
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
@@ -419,6 +486,18 @@ print(f"Using accelerator: {device}")
 
 model = ArchimedesNetV12().to(device)
 
+# lot of params for ViT so specify here:
+
+model = VisionTransformer(
+    image_size = 256, 
+    patch_size = 16, 
+    num_channels = 3, 
+    embed_dim = 768, 
+    num_heads = 1, 
+    num_layers = 5, 
+    num_classes = 37, 
+    dropout = 0.0,
+)
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
 
