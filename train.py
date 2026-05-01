@@ -492,11 +492,11 @@ print(f"Using accelerator: {device}")
 
 model = VisionTransformer(
     image_size = 256, 
-    patch_size = 16, 
+    patch_size = 4, 
     num_channels = 3, 
     embed_dim = 768, 
-    num_heads = 8, 
-    num_layers = 5, 
+    num_heads = 12, 
+    num_layers = 24, 
     num_classes = 37, 
     dropout = 0.0,
 ).to(device)
