@@ -9,7 +9,7 @@ import datetime
 # --- DEFINE MODEL ---
 
 class ANDenseBlock(nn.Module):
-    def __init__(self, in_channels, conv_layers=4, growth_rate=4, filter_size=3):
+    def __init__(self, in_channels, conv_layers=4, growth_rate=4, filter_size=1):
         super().__init__()
 
         # create our convolutional layers based on params given:
@@ -417,7 +417,7 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 print(f"Using accelerator: {device}")
 
 
-model = ARDNet().to(device)
+model = ArchimedesNetV12().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
