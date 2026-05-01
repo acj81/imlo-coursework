@@ -402,9 +402,9 @@ class ARDNet(nn.Module):
             ARDStageLayer(923, img_dim=[923, 8, 8], growth_rate=360),
             ARDStageLayer(1001, img_dim=[1001, 8, 8], growth_rate=360, has_trans_layer=False),
             nn.AdaptiveAvgPool2d(output_size=(1,1)),
-            nn.LayerNorm((1001, 1, 1)),
+            nn.LayerNorm((2081, 1, 1)),
             nn.Flatten(),
-            nn.Linear(1001, 37),
+            nn.Linear(2081, 37),
         )
 
     def forward(self, x):
