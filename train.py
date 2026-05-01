@@ -488,7 +488,7 @@ model = ArchimedesNetV12().to(device)
 
 # lot of params for ViT so specify here:
 
-model = VisionTransformer(
+#model = VisionTransformer(
     image_size = 256, 
     patch_size = 16, 
     num_channels = 3, 
