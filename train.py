@@ -498,7 +498,7 @@ model = VisionTransformer(
     num_heads = 12, 
     num_layers = 12, 
     num_classes = 37, 
-    dropout = 0.1,
+    dropout = 0.0,
 ).to(device)
 
 
@@ -576,7 +576,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 1e-2
+learn_rate = 1e-3
 
 batch_size = 16
 
