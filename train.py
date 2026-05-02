@@ -584,7 +584,13 @@ epochs = 30
 
 loss_fn = nn.CrossEntropyLoss()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
+optimizer = torch.optim.AdamW(
+    model.parameters(),
+    lr=learn_rate,
+    weight_decay=1e-2,
+    betas=(0.9, 0.999),
+    eps=1e-8,
+)
 
 
 # specify test, train datasets:
