@@ -642,7 +642,7 @@ for epoch in range(1, epochs + 1):
 
         # every few epochs, test our model:
 
-        if (epoch % 1 == 0):
+        if (epoch % 5 == 0):
                 accuracy, loss = test(
                         model = model,
                         loss_fn = loss_fn,
