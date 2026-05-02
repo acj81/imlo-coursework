@@ -492,11 +492,11 @@ print(f"Using accelerator: {device}")
 
 model = VisionTransformer(
     image_size = 256, 
-    patch_size = 32, 
+    patch_size = 16, 
     num_channels = 3, 
     embed_dim = 1408, 
-    num_heads = 8, 
-    num_layers = 48, 
+    num_heads = 2, 
+    num_layers = 36, 
     num_classes = 37, 
     dropout = 0.1,
 ).to(device)
@@ -576,7 +576,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 1e-3
+learn_rate = 1e-4
 
 batch_size = 8
 
