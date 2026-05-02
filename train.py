@@ -247,7 +247,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 3e-5
+learn_rate = 1e-5
 
 batch_size = 48
 
@@ -255,12 +255,17 @@ epochs = 30
 
 loss_fn = nn.CrossEntropyLoss()
 
-optimizer = torch.optim.AdamW(
+#optimizer = torch.optim.AdamW(
     model.parameters(),
     lr=learn_rate,
     weight_decay=1e-2,
     betas=(0.9, 0.999),
     eps=1e-8,
+)
+
+optimizer = torch.optim.Adam(
+    model.parameters(),
+    lr=learn_rate,
 )
 
 
