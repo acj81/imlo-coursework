@@ -160,20 +160,18 @@ model = ArchimedesNetV12().to(device)
 
 # lot of params for ViT so specify here:
 
-
 '''
 model = VisionTransformer(
     image_size = 256, 
     patch_size = 16, 
     num_channels = 3, 
     embed_dim = 768, 
-    num_heads = 12, 
-    num_layers = 12, 
+    num_heads = 2, 
+    num_layers = 8, 
     num_classes = 37, 
     dropout = 0.0,
 ).to(device)
 '''
-
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
@@ -314,7 +312,7 @@ for epoch in range(1, epochs + 1):
 
         # every few epochs, test our model:
 
-        if (epoch % 5 == 0):
+        if (epoch >= 15):
                 accuracy, loss = test(
                         model = model,
                         loss_fn = loss_fn,
