@@ -164,9 +164,9 @@ model = VisionTransformer(
     image_size = 256, 
     patch_size = 16, 
     num_channels = 3, 
-    embed_dim = 768, 
-    num_heads = 2, 
-    num_layers = 8, 
+    embed_dim = 128, 
+    num_heads = 1, 
+    num_layers = 1, 
     num_classes = 37, 
     dropout = 0.0,
 ).to(device)
