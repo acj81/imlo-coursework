@@ -83,6 +83,77 @@ class ArchimedesNetV12(nn.Module):
 
 
 
+class ArchimedesNetV14(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # convolution to extract features
+            nn.Conv2d(3, 7, 2, stride=2),
+            # dense-trans block combos:
+            ANDenseBlock(7, conv_layers=4, growth_rate=3),
+            ANTransBlock(19, 9, 2),
+            ANDenseBlock(9, conv_layers=8, growth_rate=8),
+            ANTransBlock(73, 36, 2),
+            ANDenseBlock(36, conv_layers=20, growth_rate=13),
+            ANTransBlock(296, 148, 2),
+            ANDenseBlock(148, conv_layers=21, growth_rate=50),
+            ANTransBlock(1198, 599, 2),
+            ANDenseBlock(599, conv_layers=64, growth_rate=64),
+            ANTransBlock(4695, 2347, 2),
+            ANDenseBlock(2347, conv_layers=130, growth_rate=130),
+            ANTransBlock(19247, 9623, 2),
+            # final pooling layer to reduce down, batch norm:
+            nn.BatchNorm2d(9623),
+            nn.AdaptiveAvgPool2d((1,1)),
+            # finally, linear classification:
+            nn.Flatten(),
+            nn.Linear(9623, 38492),
+            nn.GELU(),
+            nn.Dropout(0.1),
+            nn.Linear(38492, 37)
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
+class ArchimedesNetV15(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # convolution to extract features
+            nn.Conv2d(3, 38, 4, stride=4),
+            # dense-trans block combos:
+            ANDenseBlock(38, conv_layers=8, growth_rate=13),
+            ANTransBlock(142, 71, 2),
+            ANDenseBlock(71, conv_layers=9, growth_rate=24),
+            ANTransBlock(287, 143, 2),
+            ANDenseBlock(143, conv_layers=32, growth_rate=32),
+            ANTransBlock(1167, 583, 2),
+            ANDenseBlock(583, conv_layers=65, growth_rate=66),
+            ANTransBlock(4873, 2436, 2),
+            # final pooling layer to reduce down, batch norm:
+            nn.BatchNorm2d(2436),
+            nn.AdaptiveAvgPool2d((1,1)),
+            # finally, linear classification:
+            nn.Flatten(),
+            nn.Linear(2436, 9744),
+            nn.GELU(),
+            nn.Dropout(0.1),
+            nn.Linear(9744, 37)
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
+
 class VisionTransformer(nn.Module):
     def __init__(self, image_size, patch_size, num_channels, embed_dim, num_heads, num_layers, num_classes, dropout=0.0):
         ''' 
