@@ -55,14 +55,14 @@ class ArchimedesNetV12(nn.Module):
         # define our actual architecture:
         self.layers = nn.Sequential(
             # convolution to extract features
-            nn.Conv2d(3, 6, 1, stride=1),
+            nn.Conv2d(3, 12, 4, stride=4),
             # dense-trans block combos:
-            ANDenseBlock(6, conv_layers=6, growth_rate=24),
-            ANTransBlock(150, 75, 2),
-            ANDenseBlock(75, conv_layers=12, growth_rate=24),
-            ANTransBlock(363, 182, 2),
-            ANDenseBlock(182, conv_layers=18, growth_rate=24),
-            ANTransBlock(614, 307, 2),
+            ANDenseBlock(12, conv_layers=6, growth_rate=24),
+            ANTransBlock(156, 78, 2),
+            ANDenseBlock(78, conv_layers=12, growth_rate=24),
+            ANTransBlock(366, 183, 2),
+            ANDenseBlock(183, conv_layers=18, growth_rate=24),
+            ANTransBlock(615, 307, 2),
             ANDenseBlock(307, conv_layers=30, growth_rate=24),
             ANTransBlock(1027, 514, 2),
             ANDenseBlock(514, conv_layers=6, growth_rate=24),
@@ -249,7 +249,7 @@ def test(dataloader, model, loss_fn, device):
 
 learn_rate = 1e-4
 
-batch_size = 12
+batch_size = 32
 
 epochs = 30
 
