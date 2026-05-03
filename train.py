@@ -55,7 +55,7 @@ class ArchimedesNetV12(nn.Module):
         # define our actual architecture:
         self.layers = nn.Sequential(
             # convolution to extract features
-            nn.Conv2d(3, 6, 2, stride=2),
+            nn.Conv2d(3, 6, 1, stride=1),
             # dense-trans block combos:
             ANDenseBlock(6, conv_layers=6, growth_rate=24),
             ANTransBlock(150, 75, 2),
