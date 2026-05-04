@@ -158,15 +158,19 @@ class ArchimedesNetV16(nn.Module):
  
         # define our actual architecture:
         self.layers = nn.Sequential(
-            # no stem, to see if it changes anything:
+            # stem to reduce computation:
+            nn.Conv2d(3, 3, kernel_size=4, stride=4)
+            # DenseNet setup:
             ANDenseBlock(3, conv_layers=9, growth_rate=64),
-            ANTransBlock(579, 289, s=4),
+            ANTransBlock(579, 289, s=2),
             ANDenseBlock(289, conv_layers=9, growth_rate=104),
-            ANTransBlock(1225, 612, s=4),
+            ANTransBlock(1225, 612, s=2),
             ANDenseBlock(612, conv_layers=36, growth_rate=128),
-            ANTransBlock(5220, 2610, s=4),
+            ANTransBlock(5220, 2610, s=2),
             ANDenseBlock(2610, conv_layers=9, growth_rate=224),
-            ANTransBlock(4626, 2313, s=4),
+            ANTransBlock(4626, 2313, s=2),
+            nn.BatchNorm2d(2313),
+            nn.AdaptiveAvgPool2d((1,1)),
             # fully-connected linear classifier at end:
             nn.Flatten(),
             nn.Linear(2313, 9252),
@@ -186,15 +190,19 @@ class ArchimedesNetV17(nn.Module):
  
         # define our actual architecture:
         self.layers = nn.Sequential(
-            # no stem, to see if it changes anything:
+            # stem to reduce computation:
+            nn.Conv2d(3, 3, kernel_size=4, stride=4)
+            # DenseNet setup:
             ANDenseBlock(3, conv_layers=9, growth_rate=64),
-            ANTransBlock(579, 289, s=4),
+            ANTransBlock(579, 289, s=2),
             ANDenseBlock(289, conv_layers=9, growth_rate=128),
-            ANTransBlock(1441, 720, s=4),
+            ANTransBlock(1441, 720, s=2),
             ANDenseBlock(720, conv_layers=63, growth_rate=128),
-            ANTransBlock(8784, 4392, s=4),
+            ANTransBlock(8784, 4392, s=2),
             ANDenseBlock(4392, conv_layers=18, growth_rate=240),
-            ANTransBlock(8712, 4356, s=4),
+            ANTransBlock(8712, 4356, s=2),
+            nn.BatchNorm2d(4356),
+            nn.AdaptiveAvgPool2d((1,1)),
             # fully-connected linear classifier at end:
             nn.Flatten(),
             nn.Linear(4356, 17424),
