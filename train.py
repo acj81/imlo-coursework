@@ -152,7 +152,7 @@ class ArchimedesNetV15(nn.Module):
         return x
 
 
-class ArchimedesNetV15(nn.Module):
+class ArchimedesNetV16(nn.Module):
     def __init__(self):
         super().__init__()
  
@@ -175,6 +175,36 @@ class ArchimedesNetV15(nn.Module):
             nn.GELU(),
             nn.Dropout(0.1),
             nn.Linear(9252, 37),
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
+class ArchimedesNetV16(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # no stem, to see if it changes anything:
+            ANDenseBlock(3, num_layers=9, growth_rate=64),
+            ANTransBlock(579, 289, s=4),
+            ANDenseBlock(289, num_layers=9, growth_rate=128),
+            ANTransBlock(1441, 720, s=4),
+            ANDenseBlock(720, num_layers=63, growth_rate=128),
+            ANTransBlock(8784, 4392, s=4),
+            ANDenseBlock(4392, num_layers=18, growth_rate=240),
+            ANTransBlock(8712, 4356, s=4),
+            # final batch norm:
+            nn.BatchNorm2d(4356),
+            # fully-connected linear classifier at end:
+            nn.Flatten(),
+            nn.Linear(4356, 17424),
+            nn.GELU(),
+            nn.Dropout(0.1),
+            nn.Linear(17424, 37),
         )
 
     def forward(self, x):
@@ -255,7 +285,7 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 print(f"Using accelerator: {device}")
 
 
-model = ArchimedesNetV14().to(device)
+model = ArchimedesNetV16().to(device)
 
 # lot of params for ViT so specify here:
 
