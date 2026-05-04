@@ -289,24 +289,22 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 print(f"Using accelerator: {device}")
 
 
-model = ArchimedesNetV12().to(device)
+# model = ArchimedesNetV12().to(device)
 
 # lot of params for ViT so specify here:
 
-'''
 
 model = VisionTransformer(
     image_size = 256, 
     patch_size = 16, 
     num_channels = 3, 
-    embed_dim = 3072, 
+    embed_dim = 768, 
     num_heads = 12, 
     num_layers = 12, 
     num_classes = 37, 
     dropout = 0.1,
 ).to(device)
 
-'''
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
 
@@ -380,7 +378,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 1e-3
+learn_rate = 3e-2
 
 batch_size = 16
 
@@ -453,7 +451,7 @@ for epoch in range(1, epochs + 1):
 
         # every few epochs, test our model:
 
-        if (epoch % 5 == 0):
+        if (epoch % 10 == 0):
                 accuracy, loss = test(
                         model = model,
                         loss_fn = loss_fn,
