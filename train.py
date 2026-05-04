@@ -105,7 +105,7 @@ class ArchimedesNetV13(nn.Module):
             # finally, linear classification:
             nn.Flatten(),
             nn.Linear(329, 1316),
-            nn.GELU(),
+            nn.ReLU(),
             nn.Dropout(0.1),
             nn.Linear(1316, 37)
         )
