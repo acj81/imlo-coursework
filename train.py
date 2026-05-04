@@ -197,8 +197,6 @@ class ArchimedesNetV17(nn.Module):
             ANTransBlock(8784, 4392, s=4),
             ANDenseBlock(4392, conv_layers=18, growth_rate=240),
             ANTransBlock(8712, 4356, s=4),
-            # final batch norm:
-            nn.BatchNorm2d(4356),
             # fully-connected linear classifier at end:
             nn.Flatten(),
             nn.Linear(4356, 17424),
