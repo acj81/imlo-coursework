@@ -289,7 +289,7 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 print(f"Using accelerator: {device}")
 
 
-model = ArchimedesNetV16().to(device)
+model = ArchimedesNetV12().to(device)
 
 # lot of params for ViT so specify here:
 
@@ -299,11 +299,11 @@ model = VisionTransformer(
     image_size = 256, 
     patch_size = 16, 
     num_channels = 3, 
-    embed_dim = 1024, 
-    num_heads = 16, 
-    num_layers = 24, 
+    embed_dim = 3072, 
+    num_heads = 12, 
+    num_layers = 12, 
     num_classes = 37, 
-    dropout = 0.2,
+    dropout = 0.1,
 ).to(device)
 
 '''
