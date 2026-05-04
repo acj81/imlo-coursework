@@ -81,7 +81,7 @@ class ArchimedesNetV12(nn.Module):
         return x
 
 
-class ArchimedesNetV12(nn.Module):
+class ArchimedesNetV13(nn.Module):
     def __init__(self):
         super().__init__()
  
