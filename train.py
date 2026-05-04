@@ -159,13 +159,13 @@ class ArchimedesNetV16(nn.Module):
         # define our actual architecture:
         self.layers = nn.Sequential(
             # no stem, to see if it changes anything:
-            ANDenseBlock(3, num_layers=9, growth_rate=64),
+            ANDenseBlock(3, conv_layers=9, growth_rate=64),
             ANTransBlock(579, 289, s=4),
-            ANDenseBlock(289, num_layers=9, growth_rate=104),
+            ANDenseBlock(289, conv_layers=9, growth_rate=104),
             ANTransBlock(1225, 612, s=4),
-            ANDenseBlock(612, num_layers=36, growth_rate=128),
+            ANDenseBlock(612, conv_layers=36, growth_rate=128),
             ANTransBlock(5220, 2610, s=4),
-            ANDenseBlock(2610, num_layers=9, growth_rate=224),
+            ANDenseBlock(2610, conv_layers=9, growth_rate=224),
             ANTransBlock(4626, 2313, s=4),
             # final batch norm:
             nn.BatchNorm2d(2313),
@@ -182,20 +182,20 @@ class ArchimedesNetV16(nn.Module):
         return x
 
 
-class ArchimedesNetV16(nn.Module):
+class ArchimedesNetV17(nn.Module):
     def __init__(self):
         super().__init__()
  
         # define our actual architecture:
         self.layers = nn.Sequential(
             # no stem, to see if it changes anything:
-            ANDenseBlock(3, num_layers=9, growth_rate=64),
+            ANDenseBlock(3, conv_layers=9, growth_rate=64),
             ANTransBlock(579, 289, s=4),
-            ANDenseBlock(289, num_layers=9, growth_rate=128),
+            ANDenseBlock(289, conv_layers=9, growth_rate=128),
             ANTransBlock(1441, 720, s=4),
-            ANDenseBlock(720, num_layers=63, growth_rate=128),
+            ANDenseBlock(720, conv_layers=63, growth_rate=128),
             ANTransBlock(8784, 4392, s=4),
-            ANDenseBlock(4392, num_layers=18, growth_rate=240),
+            ANDenseBlock(4392, conv_layers=18, growth_rate=240),
             ANTransBlock(8712, 4356, s=4),
             # final batch norm:
             nn.BatchNorm2d(4356),
