@@ -35,12 +35,11 @@ class ANDenseBlock(nn.Module):
 
 
 class ANTransBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, pool_size=2):
+    def __init__(self, in_channels, out_channels, s=2):
         super().__init__()
         self.layers = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, 1),
+            nn.Conv2d(in_channels, out_channels, kernel_size=s, stride=s),
             nn.BatchNorm2d(out_channels),
-            nn.MaxPool2d(pool_size)
         )
 
     def forward(self, x):
@@ -152,6 +151,35 @@ class ArchimedesNetV15(nn.Module):
         x = self.layers(x)
         return x
 
+
+class ArchimedesNetV15(nn.Module):
+    def __init__(self):
+        super().__init__()
+ 
+        # define our actual architecture:
+        self.layers = nn.Sequential(
+            # no stem, to see if it changes anything:
+            ANDenseBlock(3, num_layers=9, growth_rate=64),
+            ANTransBlock(579, 289, s=4),
+            ANDenseBlock(289, num_layers=9, growth_rate=104),
+            ANTransBlock(1225, 612, s=4),
+            ANDenseBlock(612, num_layers=36, growth_rate=128),
+            ANTransBlock(5220, 2610, s=4),
+            ANDenseBlock(2610, num_layers=9, growth_rate=224),
+            ANTransBlock(4626, 2313, s=4),
+            # final batch norm:
+            nn.BatchNorm2d(2313),
+            # fully-connected linear classifier at end:
+            nn.Flatten(),
+            nn.Linear(2313, 9252),
+            nn.GELU(),
+            nn.Dropout(0.1),
+            nn.Linear(9252, 37),
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
 
 
 class VisionTransformer(nn.Module):
@@ -320,7 +348,7 @@ def test(dataloader, model, loss_fn, device):
 
 learn_rate = 1e-4
 
-batch_size = 4
+batch_size = 32
 
 epochs = 30
 
