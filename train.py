@@ -275,7 +275,7 @@ for epoch in range(1, epochs + 1):
                         device = device,
                 )
 
-                print(f"epoch: {epoch}, test accuracy: {(100*accuracy):>0.1f}%")
+                print(f"epoch: {epoch}, test accuracy: {(100*test_accuracy):>0.1f}%, train accuracy: {(100*train_accuracy):>0.1f}%")
 
 # record end time to get idea of speed:
 end_time = datetime.datetime.now()
