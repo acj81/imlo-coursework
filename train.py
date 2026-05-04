@@ -114,10 +114,6 @@ class ArchimedesNetV13(nn.Module):
         x = self.layers(x)
         return x
 
-    def forward(self, x):
-        out = 
-        return out
-
 
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
