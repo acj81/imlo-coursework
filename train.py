@@ -256,17 +256,26 @@ for epoch in range(1, epochs + 1):
             device = device,
         )
 
+        print(f"trained on epoch: {epoch}")
+
         # every few epochs, test our model:
 
         if (epoch % 5 == 0):
-                accuracy, loss = test(
+                # do both test and train datasets to check for overfitting:
+                train_accuracy, train_loss = test(
+                        model = model,
+                        loss_fn = loss_fn,
+                        dataloader = train_dataloader,
+                        device = device,
+                )
+                test_accuracy, test_loss = test(
                         model = model,
                         loss_fn = loss_fn,
                         dataloader = test_dataloader,
                         device = device,
                 )
 
-                print(f"epoch: {epoch}, accuracy: {(100*accuracy):>0.1f}%")
+                print(f"epoch: {epoch}, test accuracy: {(100*accuracy):>0.1f}%")
 
 # record end time to get idea of speed:
 end_time = datetime.datetime.now()
