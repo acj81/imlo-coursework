@@ -159,7 +159,7 @@ class ArchimedesNetV16(nn.Module):
         # define our actual architecture:
         self.layers = nn.Sequential(
             # stem to reduce computation:
-            nn.Conv2d(3, 3, kernel_size=4, stride=4)
+            nn.Conv2d(3, 3, kernel_size=4, stride=4),
             # DenseNet setup:
             ANDenseBlock(3, conv_layers=9, growth_rate=64),
             ANTransBlock(579, 289, s=2),
@@ -191,7 +191,7 @@ class ArchimedesNetV17(nn.Module):
         # define our actual architecture:
         self.layers = nn.Sequential(
             # stem to reduce computation:
-            nn.Conv2d(3, 3, kernel_size=4, stride=4)
+            nn.Conv2d(3, 3, kernel_size=4, stride=4),
             # DenseNet setup:
             ANDenseBlock(3, conv_layers=9, growth_rate=64),
             ANTransBlock(579, 289, s=2),
