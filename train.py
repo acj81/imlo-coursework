@@ -227,7 +227,7 @@ device = torch.accelerator.current_accelerator().type if torch.accelerator.is_av
 print(f"Using accelerator: {device}")
 
 
-model = ArchimedesNetV15().to(device)
+model = ArchimedesNetV14().to(device)
 
 # lot of params for ViT so specify here:
 
