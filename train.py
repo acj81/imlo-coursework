@@ -20,7 +20,6 @@ class ANDenseBlock(nn.Module):
                 nn.Conv2d(in_channels + (growth_rate * i), growth_rate, filter_size, padding="same"),
                 nn.LazyBatchNorm2d(),
                 nn.ReLU(),
-                nn.Dropout(0.1),
             ))
 
         # convert an array of modules into sequence, so we can call forward on it
