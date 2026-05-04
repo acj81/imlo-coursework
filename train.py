@@ -19,7 +19,7 @@ class ANDenseBlock(nn.Module):
             layers.append(nn.Sequential(
                 nn.Conv2d(in_channels + (growth_rate * i), growth_rate, filter_size, padding="same"),
                 nn.LazyBatchNorm2d(),
-                nn.GELU(),
+                nn.ReLU(),
             ))
 
         # convert an array of modules into sequence, so we can call forward on it
@@ -38,7 +38,8 @@ class ANTransBlock(nn.Module):
     def __init__(self, in_channels, out_channels, s=2):
         super().__init__()
         self.layers = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=s, stride=s),
+            nn.Conv2d(in_channels, out_channels, 1),
+            nn.MaxPool2d(s),
             nn.BatchNorm2d(out_channels),
         )
 
@@ -70,10 +71,10 @@ class ArchimedesNetV12(nn.Module):
             nn.AdaptiveAvgPool2d((1,1)),
             # finally, linear classification:
             nn.Flatten(),
-            nn.Linear(658, 2632),
+            nn.Linear(658, 512),
             nn.GELU(),
             nn.Dropout(0.1),
-            nn.Linear(2632, 37)
+            nn.Linear(512, 37)
         )
 
     def forward(self, x):
@@ -113,6 +114,10 @@ class ArchimedesNetV13(nn.Module):
         x = self.layers(x)
         return x
 
+    def forward(self, x):
+        out = 
+        return out
+
 
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
@@ -120,8 +125,6 @@ print(f"Using accelerator: {device}")
 
 
 model = ArchimedesNetV12().to(device)
-
-# lot of params for ViT so specify here:
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
@@ -259,7 +262,7 @@ for epoch in range(1, epochs + 1):
 
         # every few epochs, test our model:
 
-        if (epoch % 10 == 0):
+        if (epoch % 5 == 0):
                 accuracy, loss = test(
                         model = model,
                         loss_fn = loss_fn,
