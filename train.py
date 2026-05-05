@@ -159,6 +159,86 @@ class ResNet9(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(2),
             nn.AdaptiveAvgPool2d((1,1)),
+            nn.LazyBatchNorm2d(),
+            nn.Flatten(),
+            nn.Dropout(0.2),
+            nn.Linear(512, 37),
+        )
+
+
+    def forward(self, x):
+        # pass through each layer
+        x = self.layers(x)
+        return x
+
+
+class ResNet11(nn.Module):
+    def __init__(self):
+        super().__init__()
+        
+        # architecture here:
+        self.layers = nn.Sequential(
+            nn.Conv2d(3, 64, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.Conv2d(64, 128, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            ResBlock(128),
+            ResBlock(128),
+            nn.Conv2d(128, 256, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            ResBlock(256),
+            nn.Conv2d(256, 512, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            ResBlock(256),
+            nn.AdaptiveAvgPool2d((1,1)),
+            nn.LazyBatchNorm2d(),
+            nn.Flatten(),
+            nn.Dropout(0.2),
+            nn.Linear(512, 37),
+        )
+
+
+    def forward(self, x):
+        # pass through each layer
+        x = self.layers(x)
+        return x
+
+
+class ResNet13(nn.Module):
+    def __init__(self):
+        super().__init__()
+        
+        # architecture here:
+        self.layers = nn.Sequential(
+            nn.Conv2d(3, 64, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.Conv2d(64, 128, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            ResBlock(128),
+            ResBlock(128),
+            nn.Conv2d(128, 256, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            ResBlock(256),
+            ResBlock(256),
+            nn.Conv2d(256, 512, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            ResBlock(256),
+            nn.AdaptiveAvgPool2d((1,1)),
+            nn.LazyBatchNorm2d(),
             nn.Flatten(),
             nn.Dropout(0.2),
             nn.Linear(512, 37),
@@ -191,7 +271,9 @@ class ResNet18(nn.Module):
             ResBlock(512),
             nn.Conv2d(512, 1024, 2, stride=2),
             nn.AdaptiveAvgPool2d((1,1)),
+            nn.LazyBatchNorm2d(),
             nn.Flatten(),
+            nn.Dropout()
             nn.Linear(1024, 37),
         )
 
