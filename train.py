@@ -148,7 +148,7 @@ class ResNet9(nn.Module):
             nn.Conv2d(64, 128, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.MaxPool2d(2),
  
             ResBlock(128),
             nn.Conv2d(128, 256, 3),
