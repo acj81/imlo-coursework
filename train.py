@@ -202,7 +202,7 @@ class ResNet18(nn.Module):
         return x
 
 
-class ResNet18(nn.Module):
+class ResNet32(nn.Module):
     def __init__(self):
         super().__init__()
         
