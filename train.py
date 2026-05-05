@@ -176,51 +176,28 @@ class ResNet18(nn.Module):
         super().__init__()
         
         # architecture here:
-        self.stem = nn.Conv2d(3, 64, kernel_size=7)
-
-        self.pool = nn.MaxPool2d(2)
-
-        self.conv1 = nn.Conv2d(64, 128, 1)
-        self.conv2 = nn.Conv2d(128, 256, 1)
-        self.conv3 = nn.Conv2d(256, 512, 1)
-        self.conv4 = nn.Conv2d(512, 1024, 1)
-
-        self.res1 = ResBlock(64)
-        self.res2 = ResBlock(64)
-        self.res3 = ResBlock(128)
-        self.res4 = ResBlock(128)
-        self.res5 = ResBlock(256)
-        self.res6 = ResBlock(256)
-        self.res7 = ResBlock(512)
-        self.res8 = ResBlock(512)
-        
-        self.lc = nn.Sequential(
+        self.layers = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=7)
+            ResBlock(64)
+            ResBlock(64)
+            nn.Conv2d(64, 128, 1)
+            ResBlock(128)
+            ResBlock(128)
+            nn.Conv2d(128, 256, 1)
+            ResBlock(256)
+            ResBlock(256)
+            nn.Conv2d(256, 512, 1)
+            ResBlock(512)
+            ResBlock(512)
+            nn.Conv2d(512, 1024, 1)
             nn.AdaptiveAvgPool2d((1,1)),
             nn.Flatten(),
             nn.Linear(1024, 37)
-        )
 
 
     def forward(self, x):
         # pass through each layer
-        x = self.stem(x)
-        x = self.res1(x)
-        x = self.res2(x)
-        x = self.conv1(x)
-        x = self.pool(x)
-        x = self.res3(x)
-        x = self.res4(x)
-        x = self.conv2(x)
-        x = self.pool(x)
-        x = self.res5(x)
-        x = self.res6(x)
-        x = self.conv3(x)
-        x = self.pool(x)
-        x = self.res7(x)
-        x = self.res8(x)
-        x = self.conv4(x)
-        x = self.pool(x)
-        x = self.lc(x)
+        x = self.layers(x)
         return x
 
 # handle accelerators i.e. GPU - if one available, should use that:
