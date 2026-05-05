@@ -320,7 +320,7 @@ def test(dataloader, model, loss_fn, device):
 
 learn_rate = 0.0001
 
-batch_size = 128
+batch_size = 64
 
 epochs = 30
 
