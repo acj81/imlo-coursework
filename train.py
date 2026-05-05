@@ -131,8 +131,8 @@ class ResBlock(nn.Module):
 
     def forward(self, x):
         y = self.layers(x)
-        y += x
-        return y
+        x += y
+        return x
 
 
 class ResNet9(nn.Module):
