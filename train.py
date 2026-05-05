@@ -140,24 +140,32 @@ class ResNet9(nn.Module):
         
         # architecture here:
         self.layers = nn.Sequential(
+            # conv block
             nn.Conv2d(3, 64, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
+            nn.MaxPool2d(2),
+            # conv block 
             nn.Conv2d(64, 128, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2),
+            # res block
             ResBlock(128),
+            # conv block
             nn.Conv2d(128, 256, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2),
             ResBlock(256),
-            ResBlock(256),
+            # conv block
             nn.Conv2d(256, 512, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2),
+            # res block
+            ResBlock(256),
+            # finally, avg pooling and LC
             nn.AdaptiveAvgPool2d((1,1)),
             nn.LazyBatchNorm2d(),
             nn.Flatten(),
@@ -406,7 +414,7 @@ def test(dataloader, model, loss_fn, device):
 
 # hyperparameters:
 
-learn_rate = 0.01
+learn_rate = 0.001
 
 batch_size = 32
 
@@ -414,11 +422,18 @@ epochs = 30
 
 loss_fn = nn.CrossEntropyLoss()
 
+optimizer = torch.optim.SGD(
+    model.parameters(),
+    lr = learn_rate,
+    momentum = 0.9,
+)
+
+'''
 optimizer = torch.optim.Adam(
     model.parameters(),
     lr=learn_rate,
 )
-
+'''
 
 # specify test, train datasets:
 train_data = datasets.OxfordIIITPet(
