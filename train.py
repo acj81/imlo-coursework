@@ -232,7 +232,7 @@ class ResNet18(nn.Module):
             nn.Conv2d(2048, 4096, 2, stride=2),
             ResBlock(4096),
             ResBlock(4096),
-            nn.Conv2d(4096, 8192, 2, stride=2),
+            nn.Conv2d(4096, 8192, 1),
             nn.AdaptiveAvgPool2d((1,1)),
             nn.Flatten(),
             nn.Linear(8192, 37),
