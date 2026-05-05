@@ -177,6 +177,58 @@ class ResNet9(nn.Module):
         # pass through each layer
         x = self.conv1(x)
         x = self.conv2(x)
+        x += self.res1(x)
+        x = self.conv3(x)
+        x += self.res2(x)
+        x += self.res3(x)
+        x = self.conv4(x)
+        x = self.lc(x)
+        return x
+
+
+class ResNet9(nn.Module):
+    def __init__(self):
+        super().__init__()
+        
+        # architecture here:
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(3, 64, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+        )
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(64, 128, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+        )
+        self.res1 = ResBlock(128)
+        self.conv3 = nn.Sequential(
+            nn.Conv2d(128, 256, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+        )
+        self.res2 = ResBlock(256)
+        self.res3 = ResBlock(256)
+        self.conv4 = nn.Sequential(
+            nn.Conv2d(256, 512, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+        )
+        self.lc = nn.Sequential(
+            nn.AdaptiveAvgPool2d((1,1)),
+            nn.Flatten(),
+            nn.Dropout(0.2),
+            nn.Linear(512, 37),
+        )
+
+
+    def forward(self, x):
+        # pass through each layer
+        x = self.conv1(x)
+        x = self.conv2(x)
         x = self.res1(x)
         x = self.conv3(x)
         x = self.res2(x)
@@ -184,8 +236,6 @@ class ResNet9(nn.Module):
         x = self.conv4(x)
         x = self.lc(x)
         return x
-
-
 
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
