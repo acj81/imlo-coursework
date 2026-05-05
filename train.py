@@ -208,7 +208,7 @@ class ResNet18(nn.Module):
         
         # architecture here:
         self.layers = nn.Sequential(
-            nn.Conv2d(3, 32, kernel_size=4, stride=4),
+            nn.Conv2d(3, 32, 7),
             ResBlock(32),
             ResBlock(32),
             nn.Conv2d(32, 64, 2, stride=2),
@@ -232,7 +232,7 @@ class ResNet18(nn.Module):
             nn.Conv2d(2048, 4096, 2, stride=2),
             ResBlock(4096),
             ResBlock(4096),
-            nn.Conv2d(4096, 8192, 1),
+            nn.Conv2d(4096, 8192, 2, stride=2),
             nn.AdaptiveAvgPool2d((1,1)),
             nn.Flatten(),
             nn.Linear(8192, 37),
