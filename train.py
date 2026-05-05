@@ -144,28 +144,35 @@ class ResNet9(nn.Module):
             nn.Conv2d(3, 64, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
+
             nn.Conv2d(64, 128, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2)
+ 
             ResBlock(128),
             nn.Conv2d(128, 256, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2),
+
             ResBlock(256),
             nn.Conv2d(256, 512, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2),
+
             nn.AdaptiveAvgPool2d((1,1)),
             nn.Flatten(),
             nn.Dropout(0.2),
             nn.Linear(512, 37),
         )
 
+
     def forward(self, x):
         #
+        x = self.layers(x)
+        return x
 
 
 
