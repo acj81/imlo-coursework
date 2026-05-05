@@ -168,7 +168,7 @@ class ResNet9(nn.Module):
             nn.AdaptiveAvgPool2d((1,1)),
             nn.LazyBatchNorm2d(),
             nn.Flatten(),
-            nn.Dropout(0.1),
+            nn.Dropout(0.2),
             nn.Linear(512, 37),
         )
 
@@ -355,6 +355,7 @@ epochs = 30
 
 loss_fn = nn.CrossEntropyLoss()
 
+'''
 optimizer = torch.optim.SGD(
     model.parameters(),
     lr = learn_rate,
@@ -366,7 +367,6 @@ optimizer = torch.optim.Adam(
     model.parameters(),
     lr=learn_rate,
 )
-'''
 
 # specify test, train datasets:
 train_data = datasets.OxfordIIITPet(
