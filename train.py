@@ -201,6 +201,50 @@ class ResNet18(nn.Module):
         x = self.layers(x)
         return x
 
+
+class ResNet18(nn.Module):
+    def __init__(self):
+        super().__init__()
+        
+        # architecture here:
+        self.layers = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=7),
+            ResBlock(64),
+            ResBlock(64),
+            nn.Conv2d(64, 128, 2, stride=2),
+            ResBlock(128),
+            ResBlock(128),
+            nn.Conv2d(128, 256, 2, stride=2),
+            ResBlock(256),
+            ResBlock(256),
+            nn.Conv2d(256, 512, 2, stride=2),
+            ResBlock(512),
+            ResBlock(512),
+            nn.Conv2d(512, 1024, 2, stride=2),
+            ResBlock(1024),
+            ResBlock(1024),
+            nn.Conv2d(1024, 2048, 2, stride=2),
+            ResBlock(2048),
+            ResBlock(2048),
+            nn.Conv2d(2048, 4096, 2, stride=2),
+            ResBlock(4096),
+            ResBlock(4096),
+            nn.Conv2d(4096, 8192, 2, stride=2),
+            ResBlock(8192),
+            ResBlock(8192),
+            nn.Conv2d(8192, 16384, 1),
+            nn.AdaptiveAvgPool2d((1,1)),
+            nn.Flatten(),
+            nn.Linear(16384, 37),
+        )
+
+
+    def forward(self, x):
+        # pass through each layer
+        x = self.layers(x)
+        return x
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
