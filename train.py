@@ -130,8 +130,8 @@ class ResBlock(nn.Module):
 
 
     def forward(self, x):
-        x = self.layers(x)
-        return x
+        y = self.layers(x)
+        return y + x
 
 
 class ResNet9(nn.Module):
@@ -177,10 +177,10 @@ class ResNet9(nn.Module):
         # pass through each layer
         x = self.conv1(x)
         x = self.conv2(x)
-        x += self.res1(x)
+        x = self.res1(x)
         x = self.conv3(x)
-        x += self.res2(x)
-        x += self.res3(x)
+        x = self.res2(x)
+        x = self.res3(x)
         x = self.conv4(x)
         x = self.lc(x)
         return x
@@ -219,20 +219,20 @@ class ResNet18(nn.Module):
     def forward(self, x):
         # pass through each layer
         x = self.stem(x)
-        x += self.res1(x)
-        x += self.res2(x)
+        x = self.res1(x)
+        x = self.res2(x)
         x = self.conv1(x)
         x = self.pool(x)
-        x += self.res3(x)
-        x += self.res4(x)
+        x = self.res3(x)
+        x = self.res4(x)
         x = self.conv2(x)
         x = self.pool(x)
-        x += self.res5(x)
-        x += self.res6(x)
+        x = self.res5(x)
+        x = self.res6(x)
         x = self.conv3(x)
         x = self.pool(x)
-        x += self.res7(x)
-        x += self.res8(x)
+        x = self.res7(x)
+        x = self.res8(x)
         x = self.conv4(x)
         x = self.pool(x)
         x = self.lc(x)
