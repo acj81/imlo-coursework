@@ -161,7 +161,7 @@ class ResNet9(nn.Module):
             nn.AdaptiveAvgPool2d((1,1)),
             nn.LazyBatchNorm2d(),
             nn.Flatten(),
-            nn.Dropout(0.2),
+            nn.Dropout(0.1),
             nn.Linear(512, 37),
         )
 
@@ -200,7 +200,7 @@ class ResNet11(nn.Module):
             nn.AdaptiveAvgPool2d((1,1)),
             nn.LazyBatchNorm2d(),
             nn.Flatten(),
-            nn.Dropout(0.2),
+            nn.Dropout(0.1),
             nn.Linear(512, 37),
         )
 
@@ -240,7 +240,7 @@ class ResNet13(nn.Module):
             nn.AdaptiveAvgPool2d((1,1)),
             nn.LazyBatchNorm2d(),
             nn.Flatten(),
-            nn.Dropout(0.2),
+            nn.Dropout(0.1),
             nn.Linear(512, 37),
         )
 
@@ -273,7 +273,7 @@ class ResNet18(nn.Module):
             nn.AdaptiveAvgPool2d((1,1)),
             nn.LazyBatchNorm2d(),
             nn.Flatten(),
-            nn.Dropout()
+            nn.Dropout(0.1),
             nn.Linear(1024, 37),
         )
 
