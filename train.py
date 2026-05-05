@@ -244,7 +244,7 @@ class ResNet13(nn.Module):
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2),
-            ResBlock(256),
+            ResBlock(512),
             nn.AdaptiveAvgPool2d((1,1)),
             nn.LazyBatchNorm2d(),
             nn.Flatten(),
