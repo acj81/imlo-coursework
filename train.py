@@ -210,7 +210,7 @@ class ResNet18(nn.Module):
         self.res8 = ResBlock(512)
         
         self.lc = nn.Sequential(
-            nn.AdaptiveAvgNorm2d((1,1)),
+            nn.AdaptiveAvgPool2d((1,1)),
             nn.Flatten(),
             nn.Linear(1024, 37)
         )
