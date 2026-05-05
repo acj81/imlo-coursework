@@ -147,13 +147,13 @@ class ResNet9(nn.Module):
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2),
-            ResBlock(128)
+            ResBlock(128),
             nn.Conv2d(128, 256, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
             nn.MaxPool2d(2),
-            ResBlock(256)
-            ResBlock(256)
+            ResBlock(256),
+            ResBlock(256),
             nn.Conv2d(256, 512, 3),
             nn.LazyBatchNorm2d(),
             nn.ReLU(),
@@ -178,21 +178,22 @@ class ResNet18(nn.Module):
         # architecture here:
         self.layers = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=7)
-            ResBlock(64)
-            ResBlock(64)
-            nn.Conv2d(64, 128, 1)
-            ResBlock(128)
-            ResBlock(128)
-            nn.Conv2d(128, 256, 1)
-            ResBlock(256)
-            ResBlock(256)
-            nn.Conv2d(256, 512, 1)
-            ResBlock(512)
-            ResBlock(512)
-            nn.Conv2d(512, 1024, 1)
+            ResBlock(64),
+            ResBlock(64),
+            nn.Conv2d(64, 128, 1),
+            ResBlock(128),
+            ResBlock(128),
+            nn.Conv2d(128, 256, 1),
+            ResBlock(256),
+            ResBlock(256),
+            nn.Conv2d(256, 512, 1),
+            ResBlock(512),
+            ResBlock(512),
+            nn.Conv2d(512, 1024, 1),
             nn.AdaptiveAvgPool2d((1,1)),
             nn.Flatten(),
-            nn.Linear(1024, 37)
+            nn.Linear(1024, 37),
+        )
 
 
     def forward(self, x):
