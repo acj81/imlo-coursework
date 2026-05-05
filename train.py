@@ -115,12 +115,66 @@ class ArchimedesNetV13(nn.Module):
         return x
 
 
+class ResBlock(nn.Module):
+    def __init__(self, channels, filter_size=3, stride=1):
+        super().__init__()
+ 
+        self.layers = nn.Sequential(
+            nn.Conv2d(channels, channels, kernel_size=filter_size, stride=stride),
+            nn.BatchNorm2d(channels),
+            nn.ReLU(),
+            nn.Conv2d(channels, channels, kernel_size=filter_size, stride=stride),
+            nn.BatchNorm2d(channels),
+            nn.ReLU(),
+        )
+
+
+    def forward(self, x):
+        y = self.layers(x)
+        y += x
+        return y
+
+
+class ResNet9(nn.Module):
+    def __init__(self):
+        super().__init__()
+        
+        # architecture here:
+        self.layers = nn.Sequential(
+            nn.Conv2d(3, 64, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.Conv2d(64, 128, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+            ResBlock(128),
+            nn.Conv2d(128, 256, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            ResBlock(256),
+            nn.Conv2d(256, 512, 3),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.AdaptiveAvgPool2d((1,1)),
+            nn.Flatten(),
+            nn.Dropout(0.2),
+            nn.Linear(512, 37),
+        )
+
+    def forward(self, x):
+        #
+
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
 
-model = ArchimedesNetV12().to(device)
+model = ResNet9().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
