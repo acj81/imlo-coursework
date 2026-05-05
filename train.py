@@ -180,16 +180,16 @@ class ResNet18(nn.Module):
             nn.Conv2d(3, 64, kernel_size=7),
             ResBlock(64),
             ResBlock(64),
-            nn.Conv2d(64, 128, 1),
+            nn.Conv2d(64, 128, 2, stride=2),
             ResBlock(128),
             ResBlock(128),
-            nn.Conv2d(128, 256, 1),
+            nn.Conv2d(128, 256, 2, stride=2),
             ResBlock(256),
             ResBlock(256),
-            nn.Conv2d(256, 512, 1),
+            nn.Conv2d(256, 512, 2, stride=2),
             ResBlock(512),
             ResBlock(512),
-            nn.Conv2d(512, 1024, 1),
+            nn.Conv2d(512, 1024, 2, stride=2),
             nn.AdaptiveAvgPool2d((1,1)),
             nn.Flatten(),
             nn.Linear(1024, 37),
@@ -327,7 +327,7 @@ def test(dataloader, model, loss_fn, device):
 
 learn_rate = 0.001
 
-batch_size = 24
+batch_size = 32
 
 epochs = 30
 
