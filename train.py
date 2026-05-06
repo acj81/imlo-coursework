@@ -82,39 +82,6 @@ class ArchimedesNetV12(nn.Module):
         return x
 
 
-class ArchimedesNetV13(nn.Module):
-    def __init__(self):
-        super().__init__()
- 
-        # define our actual architecture:
-        self.layers = nn.Sequential(
-            # convolution to extract features
-            nn.Conv2d(3, 12, 1, stride=1),
-            # dense-trans block combos:
-            ANDenseBlock(12, conv_layers=6, growth_rate=24),
-            ANTransBlock(156, 76, 4),
-            ANDenseBlock(76, conv_layers=12, growth_rate=24),
-            ANTransBlock(364, 182, 4),
-            ANDenseBlock(182, conv_layers=18, growth_rate=24),
-            ANTransBlock(614, 307, 4),
-            ANDenseBlock(307, conv_layers=30, growth_rate=24),
-            ANTransBlock(658, 329, 4),
-            # final pooling layer to reduce down, batch norm:
-            nn.BatchNorm2d(329),
-            nn.AdaptiveAvgPool2d((1,1)),
-            # finally, linear classification:
-            nn.Flatten(),
-            nn.Linear(329, 1316),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(1316, 37)
-        )
-
-    def forward(self, x):
-        x = self.layers(x)
-        return x
-
-
 class ResBlock(nn.Module):
     def __init__(self, channels, filter_size=3, stride=1):
         super().__init__()
@@ -134,36 +101,38 @@ class ResBlock(nn.Module):
         return y + x
 
 
+class ConvBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1):
+        super().__init__()
+ 
+        self.layers = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, stride=stride),
+            nn.LazyBatchNorm2d(),
+            nn.ReLU(),
+        )
+
+
+    def forward(self, x):
+        x  = self.layers(x)
+        return x
+
+
 class ResNet9(nn.Module):
     def __init__(self):
         super().__init__()
         
         # architecture here:
         self.layers = nn.Sequential(
-            # conv block
-            nn.Conv2d(3, 64, 3),
-            nn.LazyBatchNorm2d(),
-            nn.ReLU(),
+            ConvBlock(3, 64, 3)
             nn.MaxPool2d(2),
-            # conv block 
-            nn.Conv2d(64, 128, 3),
-            nn.LazyBatchNorm2d(),
-            nn.ReLU(),
+            ConvBlock(64, 128, 3)
             nn.MaxPool2d(2),
-            # res block
             ResBlock(128),
-            # conv block
-            nn.Conv2d(128, 256, 3),
-            nn.LazyBatchNorm2d(),
-            nn.ReLU(),
+            ConvBlock(128, 256, 3)
             nn.MaxPool2d(2),
-            # res block
             ResBlock(256),
             # conv block
-            nn.Conv2d(256, 512, 3),
-            nn.LazyBatchNorm2d(),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
+            ConvBlock(256, 512, 3)
             # finally, avg pooling and LC
             nn.AdaptiveAvgPool2d((1,1)),
             nn.LazyBatchNorm2d(),
@@ -178,94 +147,26 @@ class ResNet9(nn.Module):
         x = self.layers(x)
         return x
 
-
-class ResNet11(nn.Module):
-    def __init__(self):
+class TArchimedesNet(nn.Module):
+    def __init__(self, num_classes):
         super().__init__()
-        
-        # architecture here:
+
         self.layers = nn.Sequential(
-            # conv block
-            nn.Conv2d(3, 64, 3),
-            nn.LazyBatchNorm2d(),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            # conv block 
-            nn.Conv2d(64, 128, 3),
-            nn.LazyBatchNorm2d(),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            # res block
+            ConvBlock(3, 128, kernel_size=7, stride=3),
             ResBlock(128),
-            # conv block
-            nn.Conv2d(128, 256, 3),
-            nn.LazyBatchNorm2d(),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            # res block
-            ResBlock(256),
-            # conv block
-            nn.Conv2d(256, 512, 3),
-            nn.LazyBatchNorm2d(),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            # res block:
+            ConvBlock(128, 512, kernel_size=5, stride=2),
             ResBlock(512),
-            # finally, avg pooling and LC
+            ConvBlock(512, 2048, kernel_size=3, stride=1),
+            # linear classifier:
             nn.AdaptiveAvgPool2d((1,1)),
-            nn.LazyBatchNorm2d(),
             nn.Flatten(),
             nn.Dropout(0.1),
-            nn.Linear(512, 37),
+            nn.Linear(2048, 37),
         )
 
     def forward(self, x):
-        # pass through each layer
         x = self.layers(x)
         return x
-
-
-class ResNet32(nn.Module):
-    def __init__(self):
-        super().__init__()
-        
-        # architecture here:
-        self.layers = nn.Sequential(
-            nn.Conv2d(3, 32, 7),
-            ResBlock(32),
-            ResBlock(32),
-            nn.Conv2d(32, 64, 2, stride=2),
-            ResBlock(64),
-            ResBlock(64),
-            nn.Conv2d(64, 128, 2, stride=2),
-            ResBlock(128),
-            ResBlock(128),
-            nn.Conv2d(128, 256, 2, stride=2),
-            ResBlock(256),
-            ResBlock(256),
-            nn.Conv2d(256, 512, 2, stride=2),
-            ResBlock(512),
-            ResBlock(512),
-            nn.Conv2d(512, 1024, 2, stride=2),
-            ResBlock(1024),
-            ResBlock(1024),
-            nn.Conv2d(1024, 2048, 2, stride=2),
-            ResBlock(2048),
-            ResBlock(2048),
-            nn.Conv2d(2048, 4096, 2, stride=2),
-            ResBlock(4096),
-            ResBlock(4096),
-            nn.AdaptiveAvgPool2d((1,1)),
-            nn.Flatten(),
-            nn.Linear(4096, 37),
-        )
-
-
-    def forward(self, x):
-        # pass through each layer
-        x = self.layers(x)
-        return x
-
 
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
