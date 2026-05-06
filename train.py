@@ -117,51 +117,34 @@ class ConvBlock(nn.Module):
         return x
 
 
-class ResNet9(nn.Module):
-    def __init__(self):
-        super().__init__()
-        
-        # architecture here:
-        self.layers = nn.Sequential(
-            ConvBlock(3, 64, 3),
-            nn.MaxPool2d(2),
-            ConvBlock(64, 128, 3),
-            nn.MaxPool2d(2),
-            ResBlock(128),
-            ConvBlock(128, 256, 3),
-            nn.MaxPool2d(2),
-            ResBlock(256),
-            # conv block
-            ConvBlock(256, 512, 3),
-            # finally, avg pooling and LC
-            nn.AdaptiveAvgPool2d((1,1)),
-            nn.LazyBatchNorm2d(),
-            nn.Flatten(),
-            nn.Dropout(0.2),
-            nn.Linear(512, 37),
-        )
-
-
-    def forward(self, x):
-        # pass through each layer
-        x = self.layers(x)
-        return x
-
-class TArchimedesNet(nn.Module):
+class ResNet20_8(nn.Module):
     def __init__(self, num_classes=37):
         super().__init__()
 
         self.layers = nn.Sequential(
-            ConvBlock(3, 128, kernel_size=7, stride=3),
+            ConvBlock(3, 8, kernel_size=3),
+            ResBlock(8),
+            nn.MaxPool2d(2),
+            ConvBlock(8, 16, kernel_size=3),
+            ResBlock(16),
+            nn.MaxPool2d(2),
+            ConvBlock(16, 32, kernel_size=3),
+            ResBlock(32),
+            nn.MaxPool2d(2),
+            ConvBlock(32, 64, kernel_size=3),
+            ResBlock(64),
+            nn.MaxPool2d(2),
+            ConvBlock(64, 128, kernel_size=3),
             ResBlock(128),
-            ConvBlock(128, 512, kernel_size=5, stride=2),
-            ResBlock(512),
-            ConvBlock(512, 2048, kernel_size=3, stride=1),
+            nn.MaxPool2d(2),
+            ConvBlock(128, 256, kernel_size=3),
+            ResBlock(256),
+            nn.MaxPool2d(2),
             # linear classifier:
             nn.AdaptiveAvgPool2d((1,1)),
             nn.Flatten(),
             nn.Dropout(0.1),
-            nn.Linear(2048, num_classes),
+            nn.Linear(256, num_classes),
         )
 
     def forward(self, x):
@@ -169,28 +152,7 @@ class TArchimedesNet(nn.Module):
         return x
 
 
-class TArchimedesNet(nn.Module):
-    def __init__(self, num_classes=37):
-        super().__init__()
-
-        self.layers = nn.Sequential(
-            ConvBlock(3, 32, kernel_size=3),
-            ConvBlock(128, 512, kernel_size=5, stride=2),
-            ConvBlock(512, 2048, kernel_size=3, stride=1),
-            # linear classifier:
-            nn.AdaptiveAvgPool2d((1,1)),
-            nn.Flatten(),
-            nn.Dropout(0.5),
-            nn.Linear(2048, num_classes),
-        )
-
-    def forward(self, x):
-        x = self.layers(x)
-        return x
-
-
-
-class ResNet20(nn.Module):
+class ResNet20_16(nn.Module):
     def __init__(self, num_classes=37):
         super().__init__()
 
@@ -225,12 +187,47 @@ class ResNet20(nn.Module):
         return x
 
 
+class ResNet20_32(nn.Module):
+    def __init__(self, num_classes=37):
+        super().__init__()
+
+        self.layers = nn.Sequential(
+            ConvBlock(3, 32, kernel_size=3),
+            ResBlock(32),
+            nn.MaxPool2d(2),
+            ConvBlock(32, 64, kernel_size=3),
+            ResBlock(64),
+            nn.MaxPool2d(2),
+            ConvBlock(64, 128, kernel_size=3),
+            ResBlock(128),
+            nn.MaxPool2d(2),
+            ConvBlock(128, 256, kernel_size=3),
+            ResBlock(256),
+            nn.MaxPool2d(2),
+            ConvBlock(256, 512, kernel_size=3),
+            ResBlock(512),
+            nn.MaxPool2d(2),
+            ConvBlock(512, 1024, kernel_size=3),
+            ResBlock(1024),
+            nn.MaxPool2d(2),
+            # linear classifier:
+            nn.AdaptiveAvgPool2d((1,1)),
+            nn.Flatten(),
+            nn.Dropout(0.1),
+            nn.Linear(1024, num_classes),
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
 
-model = ResNet20().to(device)
+model = ResNet20_8().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
