@@ -195,22 +195,22 @@ class ResNet20(nn.Module):
         super().__init__()
 
         self.layers = nn.Sequential(
-            ConvBlock(3, 16),
+            ConvBlock(3, 16, kernel_size=3),
             ResBlock(16),
             nn.MaxPool2d(2),
-            ConvBlock(16, 32),
+            ConvBlock(16, 32, kernel_size=3),
             ResBlock(32),
             nn.MaxPool2d(2),
-            ConvBlock(32, 64),
+            ConvBlock(32, 64, kernel_size=3),
             ResBlock(64),
             nn.MaxPool2d(2),
-            ConvBlock(64, 128),
+            ConvBlock(64, 128, kernel_size=3),
             ResBlock(128),
             nn.MaxPool2d(2),
-            ConvBlock(128, 256),
+            ConvBlock(128, 256, kernel_size=3),
             ResBlock(256),
             nn.MaxPool2d(2),
-            ConvBlock(256, 512),
+            ConvBlock(256, 512, kernel_size=3),
             ResBlock(512),
             nn.MaxPool2d(2),
             # linear classifier:
