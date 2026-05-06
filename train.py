@@ -123,16 +123,16 @@ class ResNet9(nn.Module):
         
         # architecture here:
         self.layers = nn.Sequential(
-            ConvBlock(3, 64, 3)
+            ConvBlock(3, 64, 3),
             nn.MaxPool2d(2),
-            ConvBlock(64, 128, 3)
+            ConvBlock(64, 128, 3),
             nn.MaxPool2d(2),
             ResBlock(128),
-            ConvBlock(128, 256, 3)
+            ConvBlock(128, 256, 3),
             nn.MaxPool2d(2),
             ResBlock(256),
             # conv block
-            ConvBlock(256, 512, 3)
+            ConvBlock(256, 512, 3),
             # finally, avg pooling and LC
             nn.AdaptiveAvgPool2d((1,1)),
             nn.LazyBatchNorm2d(),
