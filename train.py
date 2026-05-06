@@ -339,7 +339,7 @@ def test(dataloader, model, loss_fn, device):
 
 learn_rate = 0.001
 
-batch_size = 64
+batch_size = 48
 
 epochs = 30
 
@@ -409,7 +409,7 @@ for epoch in range(1, epochs + 1):
 
         # every few epochs, test our model:
 
-        if (epoch % 5 == 0):
+        if (epoch % 1 == 0):
                 # do both test and train datasets to check for overfitting:
                 train_accuracy, train_loss = test(
                         model = model,
