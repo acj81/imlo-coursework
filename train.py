@@ -148,7 +148,7 @@ class ResNet9(nn.Module):
         return x
 
 class TArchimedesNet(nn.Module):
-    def __init__(self, num_classes):
+    def __init__(self, num_classes=37):
         super().__init__()
 
         self.layers = nn.Sequential(
@@ -161,7 +161,7 @@ class TArchimedesNet(nn.Module):
             nn.AdaptiveAvgPool2d((1,1)),
             nn.Flatten(),
             nn.Dropout(0.1),
-            nn.Linear(2048, 37),
+            nn.Linear(2048, num_classes),
         )
 
     def forward(self, x):
