@@ -222,12 +222,47 @@ class ResNet20_32(nn.Module):
         return x
 
 
+class ResNet20_64(nn.Module):
+    def __init__(self, num_classes=37):
+        super().__init__()
+
+        self.layers = nn.Sequential(
+            ConvBlock(3, 64, kernel_size=3),
+            ResBlock(64),
+            nn.MaxPool2d(2),
+            ConvBlock(64, 128, kernel_size=3),
+            ResBlock(128),
+            nn.MaxPool2d(2),
+            ConvBlock(128, 256, kernel_size=3),
+            ResBlock(256),
+            nn.MaxPool2d(2),
+            ConvBlock(256, 512, kernel_size=3),
+            ResBlock(512),
+            nn.MaxPool2d(2),
+            ConvBlock(512, 1024, kernel_size=3),
+            ResBlock(1024),
+            nn.MaxPool2d(2),
+            ConvBlock(1024, 2048, kernel_size=3),
+            ResBlock(2048),
+            nn.MaxPool2d(2),
+            # linear classifier:
+            nn.AdaptiveAvgPool2d((1,1)),
+            nn.Flatten(),
+            nn.Dropout(0.1),
+            nn.Linear(2048, num_classes),
+        )
+
+    def forward(self, x):
+        x = self.layers(x)
+        return x
+
+
 # handle accelerators i.e. GPU - if one available, should use that:
 device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
 print(f"Using accelerator: {device}")
 
 
-model = ResNet20_32().to(device)
+model = ResNet20_64().to(device)
 
 
 # --- DEFINE OUR TRAIN, TEST AND DATA AUGMENTATION FUNCTIONS ---
